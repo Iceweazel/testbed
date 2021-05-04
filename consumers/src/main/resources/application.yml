@@ -1,32 +1,18 @@
 spring:
   application:
     name: testbed
-  kafka:
-    enable: true
-    #    ssl:
-    #      protocol: SSL
-    #      trust-store-location: classpath:kafka.jks
-    #      trust-store-password: Master
-    #      key-store-location: classpath:kafka.jks
-    #      key-store-password: Master
-    #      key-password: Master
-    consumer:
-      bootstrap-servers: localhost:9092,kafka2:9092
-      group-id: fullnode
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      bootstrap-servers: localhost:9092,kafka2:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 testing:
-  mq: "kafka"
+  mq: ''
 
 active-mq:
   broker-url: "tcp://localhost:61616"
   topic: "ledger-1"
 
+kafka:
+  topic: ledger-1
+  bootstrap: localhost:9092
+  group: listener-1
+  
 server:
   port: 9080

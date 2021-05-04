@@ -14,7 +14,7 @@ import java.time.Instant;
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
 public class KafkaConsumer extends AbstractConsumer {
 
-    @KafkaListener(topics = topicName)
+    @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(final ConsumerRecord<String, String> consumerRecord) {
         log.debug("received {} {}", consumerRecord.key(), consumerRecord.value());
         handleContent(consumerRecord);

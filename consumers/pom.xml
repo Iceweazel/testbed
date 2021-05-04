@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.mq</groupId>
-    <artifactId>testbed-consumers</artifactId>
+    <artifactId>consumers</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>testbed-consumers</name>
+    <name>consumers</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
