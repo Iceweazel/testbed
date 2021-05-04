@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: testbed
+#  kafka:
+#    enable: true
+#    properties:
+#      ssl.endpoint.identification.algorithm:
+#    security:
+#      protocol: SSL
+#    ssl:
+#      trust-store-location: file:src/main/resources/store/kafka.client.truststore.jks
+#      trust-store-password: master
+#      key-store-location: file:src/main/resources/store/client.ks
+#      key-store-password: master
+#      key-password: master
+#    producer:
+#      bootstrap-servers: localhost:9092,kafka2:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+testing:
+  mq:
+
+active-mq:
+  broker-url: "tcp://localhost:61616"
+  topic: "ledger-1"
+
+kafka:
+  topic: ledger-1
+  bootstrap: kafka2:9092
+
+server:
+  port: 9081
