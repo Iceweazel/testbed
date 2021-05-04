@@ -1,9 +1,11 @@
 package com.mq.testbedproducers.kafka;
 
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.kafka.core.KafkaTemplate;

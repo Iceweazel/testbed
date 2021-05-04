@@ -29,7 +29,6 @@ public class KafkaConfiguration {
     @Autowired
     private KafkaProperties kafkaProperties;
 
-    @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
     @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props =
@@ -43,19 +42,16 @@ public class KafkaConfiguration {
         return props;
     }
 
-    @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
-    @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
     @Bean
     public NewTopic ledgerTopic() {
         return new NewTopic(topicName, 3, (short) 1);
