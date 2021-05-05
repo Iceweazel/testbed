@@ -48,6 +48,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 
     @EventListener(ApplicationStartedEvent.class)
     private void produce() {
+        warmUp();
         produceWithPayload(PAYLOAD_8_BYTES, 8);
         try {
             Thread.sleep(100000);

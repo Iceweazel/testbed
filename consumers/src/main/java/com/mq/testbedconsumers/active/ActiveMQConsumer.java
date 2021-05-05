@@ -2,7 +2,8 @@ package com.mq.testbedconsumers.active;
 
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
+
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class ActiveMQConsumer extends AbstractConsumer implements MessageListene
 
     private void handleContent(String message) {
         if(message.startsWith(WARM_UP)) {
-            log.debug("warmpup");
+            log.info("warmpup");
             return;
         } else if(message.startsWith(START_TEST)) {
             startTest(message);

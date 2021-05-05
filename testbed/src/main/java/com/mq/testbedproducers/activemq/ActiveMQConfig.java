@@ -1,6 +1,6 @@
 package com.mq.testbedproducers.activemq;
 
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.core.JmsTemplate;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
 
 
 @Configuration
@@ -18,16 +17,18 @@ public class ActiveMQConfig {
     @Value("${active-mq.broker-url}")
     private String brokerUrl;
 
+    @Value("${active-mq.user}")
+    private String userName;
+
+    @Value("${active-mq.password}")
+    private String password;
+
     @Bean
     public ConnectionFactory connectionFactory(){
         ActiveMQConnectionFactory activeMQConnectionFactory  = new ActiveMQConnectionFactory();
-        try {
-            activeMQConnectionFactory.setBrokerURL(brokerUrl);
-            activeMQConnectionFactory.setUser("test");
-            activeMQConnectionFactory.setPassword("test");
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
+        activeMQConnectionFactory.setBrokerURL(brokerUrl);
+        activeMQConnectionFactory.setUserName(userName);
+        activeMQConnectionFactory.setPassword(password);
         return  activeMQConnectionFactory;
     }
 
