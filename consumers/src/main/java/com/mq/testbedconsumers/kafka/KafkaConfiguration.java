@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,6 +29,12 @@ public class KafkaConfiguration {
 
     @Value("${kafka.group}")
     public String consumerGroup;
+
+    @Value("${kafka.offset-reset}")
+    public String offsetReset;
+
+    @Value("${kafka.sse-enabled}")
+    public boolean sseEnabled;
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<Integer, String>
@@ -54,7 +62,15 @@ public class KafkaConfiguration {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                bootStrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, offsetReset);
+
+        if(sseEnabled) {
+            props.put("security.protocl", "SASL_SSL");
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "path");
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "password");
+            props.put(SaslConfigs.SASL_MECHANISM, SaslConfigs.DEFAULT_SASL_MECHANISM);
+            props.put(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka");
+        }
         return props;
     }
 
