@@ -3,6 +3,7 @@ package com.mq.testbedproducers.rabbitmq;
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;

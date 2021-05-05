@@ -2,6 +2,8 @@ package com.mq.testbedproducers.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +22,16 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
 public class KafkaConfiguration {
 
+    private static final String SECURITY_PROTOCOL = "security.protocol";
+
     @Value("${kafka.topic}")
     public String topicName;
 
     @Value("${kafka.bootstrap}")
     public String bootStrapServers;
+
+    @Value("${kafka.sse-enabled}")
+    public boolean sseEnabled;
 
     @Autowired
     private KafkaProperties kafkaProperties;
@@ -39,6 +46,14 @@ public class KafkaConfiguration {
                 StringSerializer.class);
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                bootStrapServers);
+
+        if(sseEnabled) {
+            props.put("security.protocol", "SSL");
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "path");
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "password");
+            props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1, TLSv1.1, TLSv1.2, TLSv1.3");
+        
+        }
         return props;
     }
 

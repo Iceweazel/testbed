@@ -16,5 +16,12 @@ kafka:
   offset-reset: earliest
   sse-enabled: false
 
+rabbit:
+  user: master
+  password: master
+  host: localhost
+  port: 5672
+  sse-enabled: false
+
 server:
   port: 9080

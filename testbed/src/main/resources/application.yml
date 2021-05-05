@@ -12,6 +12,7 @@ active-mq:
 kafka:
   topic: ledger-1
   bootstrap: localhost:9092
+  sse-enabled: false
 
 server:
   port: 9081

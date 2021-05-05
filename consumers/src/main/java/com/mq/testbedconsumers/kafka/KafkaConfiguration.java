@@ -41,6 +41,7 @@ public class KafkaConfiguration {
                         kafkaListenerContainerFactory(ConsumerFactory<Integer, String> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory =
                                 new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConcurrency(1);
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }
@@ -65,11 +66,11 @@ public class KafkaConfiguration {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, offsetReset);
 
         if(sseEnabled) {
-            props.put("security.protocl", "SASL_SSL");
+            props.put("security.protocol", "SSL");
             props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "path");
             props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "password");
-            props.put(SaslConfigs.SASL_MECHANISM, SaslConfigs.DEFAULT_SASL_MECHANISM);
-            props.put(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka");
+            props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1, TLSv1.1, TLSv1.2, TLSv1.3");
+            
         }
         return props;
     }

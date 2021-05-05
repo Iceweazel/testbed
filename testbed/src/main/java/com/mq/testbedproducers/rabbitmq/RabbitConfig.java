@@ -45,7 +45,7 @@ public class RabbitConfig {
         connectionFactoryBean.setPassword(env.getProperty("rabbit.password"));
 
         // SSL-Configuration if set
-        if(env.getProperty("rabbit.ssl") != null) {
+        if(env.getProperty("rabbit.ssl-enabled").equals("true")) {
             connectionFactoryBean.setUseSSL(true);
             connectionFactoryBean.setSslAlgorithm(env.getProperty("rabbit.ssl"));
 
