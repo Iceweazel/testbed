@@ -25,5 +25,10 @@ rabbit:
   port: 5672
   sse-enabled: false
 
+pulsar:
+  service-url: pulsar://localhost:6650
+  topic: ledger-1
+  subscription-name: ledger-sub
+
 server:
   port: 9080

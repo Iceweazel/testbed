@@ -3,6 +3,7 @@ package com.mq.testbedconsumers.pulsar;
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +18,27 @@ public class PulsarConsumer extends AbstractConsumer {
 
     Consumer<byte[]> consumer;
 
-    private static final String SUBSCRIPTION_NAME = "test-subscription";
-    private static final String SERVICE_URL = "pulsar://localhost:6650";
-    private static final String TOPIC_NAME = "test-topic";
+    private final String serviceUrl;
+    private final String topicName;
+    private final String subName;
 
     private PulsarClient client;
 
-    public PulsarConsumer() {
+    public PulsarConsumer(@Value("${pulsar.service-url}") String url, 
+        @Value("${pulsar.topic}") String t, 
+        @Value("${pulsar.subscription-name}") String sub) {
 
+        this.serviceUrl = url;
+        this.topicName = t;
+        this.subName = sub;
         try {
             client = PulsarClient.builder()
-                    .serviceUrl(SERVICE_URL)
+                    .serviceUrl(serviceUrl)
                     .build();
             consumer = client.newConsumer()
-                    .topic(TOPIC_NAME)
+                    .topic(topicName)
                     .subscriptionType(SubscriptionType.Shared)
-                    .subscriptionName(SUBSCRIPTION_NAME)
+                    .subscriptionName(subName)
                     .subscribe();;
         } catch (PulsarClientException e) {
             e.printStackTrace();
@@ -41,24 +47,29 @@ public class PulsarConsumer extends AbstractConsumer {
 
         do {
             // Wait until a message is available
-            CompletableFuture<Message<byte[]>> future = consumer.receiveAsync();
 
-            Message<byte[]> msg = null;
+            Message<byte[]> future = null;
             try {
-                msg = future.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                future = consumer.receive();
+            } catch (PulsarClientException e) {
+                log.error(e.getMessage());
             }
+            // Message<byte[]> msg = null;
+            // try {
+            //     msg = future.get();
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // } catch (ExecutionException e) {
+            //     e.printStackTrace();
+            // }
             // Extract the message as a printable string and then log
-            String content = new String(msg.getData());
-            log.debug("Received message '"+content+"' with ID "+msg.getMessageId());
+            String content = new String(future.getData());
+            log.debug("Received message '"+content+"' with ID "+future.getMessageId());
 
             handleContent(content);
             // Acknowledge processing of the message so that it can be deleted
             try {
-                consumer.acknowledge(msg);
+                consumer.acknowledge(future);
             } catch (PulsarClientException e) {
                 e.printStackTrace();
             }

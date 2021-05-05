@@ -3,8 +3,10 @@ package com.mq.testbedproducers.pulsar;
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -18,19 +20,24 @@ import static java.util.stream.IntStream.range;
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "pulsar")
 public class PulsarProducer extends AbstractGenericProducer {
 
-    private static final String SERVICE_URL = "pulsar://localhost:6650";
-    private static final String TOPIC_NAME = "test-topic";
+    
+    private final String serviceUrl;
+    private final String topicName;
 
     private PulsarClient client;
     private Producer<byte[]> producer;
 
-    public PulsarProducer() {
+    public PulsarProducer(@Value("${pulsar.service-url}") String url, 
+        @Value("${pulsar.topic}") String t) {
+
+        this.serviceUrl = url;
+        this.topicName = t;
         try {
             client = PulsarClient.builder()
-                    .serviceUrl(SERVICE_URL)
+                    .serviceUrl(serviceUrl)
                     .build();
             producer = client.newProducer()
-                    .topic(TOPIC_NAME)
+                    .topic(topicName)
                     .compressionType(CompressionType.LZ4)
                     .create();
         } catch (PulsarClientException e) {
@@ -69,6 +76,6 @@ public class PulsarProducer extends AbstractGenericProducer {
         });
         publish(END_TEST, END_TEST);
 
-        log.info("{} messages were produced to topic {}", REPETITIONS, TOPIC_NAME);
+        log.info("{} messages were produced to topic {}", REPETITIONS, topicName);
     }
 }
