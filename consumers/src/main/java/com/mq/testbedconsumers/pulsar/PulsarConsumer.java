@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "pulsar")
-public class PulsarConsumer extends AbstractConsumer {
+public class PulsarConsumer extends AbstractConsumer implements MessageListener {
 
     Consumer<byte[]> consumer;
 
@@ -28,6 +28,8 @@ public class PulsarConsumer extends AbstractConsumer {
         @Value("${pulsar.topic}") String t, 
         @Value("${pulsar.subscription-name}") String sub) {
 
+        super();
+
         this.serviceUrl = url;
         this.topicName = t;
         this.subName = sub;
@@ -35,48 +37,21 @@ public class PulsarConsumer extends AbstractConsumer {
             client = PulsarClient.builder()
                     .serviceUrl(serviceUrl)
                     .build();
-            consumer = client.newConsumer()
-                    .topic(topicName)
-                    .subscriptionType(SubscriptionType.Shared)
-                    .subscriptionName(subName)
-                    .subscribe();;
+
+            consumer = client
+                .newConsumer(Schema.BYTES)
+                .subscriptionName(subName)
+                .subscriptionType(SubscriptionType.Exclusive)
+                .messageListener(this).topic(topicName)
+                .subscribe();
+
         } catch (PulsarClientException e) {
             e.printStackTrace();
         }
-
-
-        do {
-            // Wait until a message is available
-
-            Message<byte[]> future = null;
-            try {
-                future = consumer.receive();
-            } catch (PulsarClientException e) {
-                log.error(e.getMessage());
-            }
-            // Message<byte[]> msg = null;
-            // try {
-            //     msg = future.get();
-            // } catch (InterruptedException e) {
-            //     e.printStackTrace();
-            // } catch (ExecutionException e) {
-            //     e.printStackTrace();
-            // }
-            // Extract the message as a printable string and then log
-            String content = new String(future.getData());
-            log.debug("Received message '"+content+"' with ID "+future.getMessageId());
-
-            handleContent(content);
-            // Acknowledge processing of the message so that it can be deleted
-            try {
-                consumer.acknowledge(future);
-            } catch (PulsarClientException e) {
-                e.printStackTrace();
-            }
-        } while (true);
     }
 
     private void handleContent(String message) {
+
         if(message.startsWith(WARM_UP)) {
             log.debug("warmpup");
             return;
@@ -86,23 +61,26 @@ public class PulsarConsumer extends AbstractConsumer {
         } else if(message.startsWith(END_TEST)) {
             endTest();
             return;
+        } else {
+            messageReceived++;
         }
-        log.debug("Received <" + message + ">");
     }
 
-    private void endTest() {
-        long timeTaken = Instant.now().toEpochMilli() - testStart;
-        log.info("{} took {} ms with a payload size of {} and {} messages",
-                END_TEST, timeTaken, payloadSize, repetitions);
+	@Override
+	public void received(Consumer arg0, Message arg1) {
+        String content = new String(arg1.getData());
+        handleContent(content);
+        log.debug("Received message '"+content+"' with ID "+arg1.getMessageId());
+        try {
+            extracted(arg0, arg1);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+		
+	}
 
-    }
-
-    private void startTest(String message) {
-        testStart = Instant.now().toEpochMilli();
-        String[] args = message.split("-");
-        repetitions = Integer.parseInt(args[1]);
-        payloadSize = Integer.parseInt(args[2]);
-        log.info("{} with {} repetitions and payloadsize {}", START_TEST, repetitions, payloadSize);
+    private void extracted(Consumer arg0, Message arg1) throws PulsarClientException {
+        arg0.acknowledge(arg1);
     }
 
 }

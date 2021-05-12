@@ -2,7 +2,6 @@ package com.mq.testbedproducers.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,8 @@ public class KafkaConfiguration {
                 StringSerializer.class);
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                bootStrapServers);
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 
         if(sseEnabled) {
             props.put("security.protocol", "SSL");

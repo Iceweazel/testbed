@@ -46,7 +46,7 @@ public class NatsProducer extends AbstractGenericProducer {
     @Override
     public void publish(String key, String message) {
         try {
-            natsConnection.publish(topicName, "hello", message.getBytes());
+            natsConnection.publish(topicName, message.getBytes());
             log.info("message published: {}", message);
         } catch (Exception ioe) {
             log.error("Error publishing message: {} to {} ", message, topicName, ioe);
@@ -56,13 +56,11 @@ public class NatsProducer extends AbstractGenericProducer {
 
     @Override
     public void warmUp() {
-        // TODO Auto-generated method stub
         publish(WARM_UP, WARM_UP);
     }
 
     @Override
-    public void produceWithPayload(Resource resource, int payloadSize) {
-        // TODO Auto-generated method stub
+    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
         loadPayload(resource);
         publish(START_TEST, payload);
     }

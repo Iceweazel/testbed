@@ -6,5 +6,5 @@ public interface ProducerInterface {
 
     void publish(String key, String message);
     void warmUp();
-    void produceWithPayload(Resource resource, int payloadSize);
+    void produceWithPayload(Resource resource, int payloadSize, long wait);
 }

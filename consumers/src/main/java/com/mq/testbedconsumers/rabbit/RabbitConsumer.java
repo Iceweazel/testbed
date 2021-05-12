@@ -26,22 +26,9 @@ public class RabbitConsumer extends AbstractConsumer {
         } else if(message.startsWith(END_TEST)) {
             endTest();
             return;
+        } else {
+            messageReceived++;
         }
         log.debug("Received <" + message + ">");
-    }
-
-    private void endTest() {
-        long timeTaken = Instant.now().toEpochMilli() - testStart;
-        log.info("{} took {} ms with a payload size of {} and {} messages",
-                END_TEST, timeTaken, payloadSize, repetitions);
-
-    }
-
-    private void startTest(String message) {
-        testStart = Instant.now().toEpochMilli();
-        String[] args = message.split("-");
-        repetitions = Integer.parseInt(args[1]);
-        payloadSize = Integer.parseInt(args[2]);
-        log.info("{} with {} repetitions and payloadsize {}", START_TEST, repetitions, payloadSize);
     }
 }

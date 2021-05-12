@@ -14,6 +14,10 @@ active-mq:
 kafka:
   topic: ledger-1
   bootstrap: localhost:9092
+  sse-enabled: false
+  acks: 1
+  retries: MAX_INT
+  max-in-flight: 5
   
 pulsar:
   service-url: pulsar://localhost:6650

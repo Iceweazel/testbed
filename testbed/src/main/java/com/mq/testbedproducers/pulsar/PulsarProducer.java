@@ -15,6 +15,8 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.IntStream.range;
 
+import java.util.concurrent.CompletableFuture;
+
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "pulsar")
@@ -38,6 +40,7 @@ public class PulsarProducer extends AbstractGenericProducer {
                     .build();
             producer = client.newProducer()
                     .topic(topicName)
+                    .messageRoutingMode(MessageRoutingMode.SinglePartition)
                     .compressionType(CompressionType.LZ4)
                     .create();
         } catch (PulsarClientException e) {
@@ -49,9 +52,9 @@ public class PulsarProducer extends AbstractGenericProducer {
     public void publish(String key, String message) {
         // Send each message and log message content and ID when successfully received
         try {
-            MessageId msgId = producer.send(message.getBytes());
+            CompletableFuture<MessageId> msgId = producer.sendAsync(message.getBytes());
             log.debug("Published message '"+message+"' with the ID "+msgId);
-        } catch (PulsarClientException e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
         }
     }
@@ -61,21 +64,50 @@ public class PulsarProducer extends AbstractGenericProducer {
         range(0, REPETITIONS).forEach(i -> {
             log.debug("sending new message");
             publish("", WARM_UP);
+            if ( i % 10000 == 0) {
+                try {
+                    producer.flush();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
         });
+        try {
+            producer.flush();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
     @Override
-    public void produceWithPayload(Resource resource, int payloadSize) {
+    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
         loadPayload(resource);
         String startPayload = START_TEST + "-" + REPETITIONS + "-" + payloadSize;
         publish(START_TEST, startPayload);
         // Produce sample data
+        try {
+            producer.flush();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         range(0, REPETITIONS).forEach(i -> {
             log.debug("sending new message");
-            publish("", payload);
+            String testLoad = addTimeStamp(payload);
+            publish("", testLoad);
+            if ( i % 10000 == 0) {
+                try {
+                    producer.flush();
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
         });
         publish(END_TEST, END_TEST);
-
+        try {
+            producer.flush();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         log.info("{} messages were produced to topic {}", REPETITIONS, topicName);
     }
 }

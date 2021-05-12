@@ -40,14 +40,15 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     }
 
     @Override
-    public void produceWithPayload(Resource resource, int payloadSize) {
+    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
         loadPayload(resource);
         String startPayload = START_TEST + "-" + REPETITIONS + "-" + payloadSize;
         publish(START_TEST, startPayload);
         // Produce sample data
         range(0, REPETITIONS).forEach(i -> {
             log.debug("sending new message");
-            publish("", payload);
+            String message = addTimeStamp(payload);
+            publish("", message);
         });
         publish(END_TEST, END_TEST);
         log.info("{} messages were produced to topic {}", REPETITIONS, topic);

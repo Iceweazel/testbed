@@ -39,25 +39,24 @@ public class NatsConsumer extends AbstractConsumer {
         try {
             return Nats.connect(uri);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
     }
 
     private void subscribe() {
-        Subscription subscription = natsConnection
-            .subscribe(topicName);
 
-        disPatcher = natsConnection.createDispatcher((msg) -> {
-            log.info("Received message \"%s\" on subject \"%s\"\n", 
-                                    new String(msg.getData(), StandardCharsets.UTF_8), 
-                                    msg.getSubject());
-        });
+        disPatcher = natsConnection.createDispatcher(msg -> {});
 
-        disPatcher.subscribe(topicName);
+        disPatcher.subscribe(topicName, msg -> handleContent(msg));
+    }
+
+    private void handleContent(Message msg) {
+        if(msg != null && msg.getData() != null) {
+            log.info("Received message: {} on subject {}", 
+                new String(msg.getData(), StandardCharsets.UTF_8), msg.getSubject());
+        }
     }
 }

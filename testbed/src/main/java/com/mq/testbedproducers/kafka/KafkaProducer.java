@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import static java.util.stream.IntStream.range;
 
+import java.time.Instant;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -24,37 +26,40 @@ public class KafkaProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(String key, String message) {
-        producer.send(topic.name(), key,message).addCallback(
-                result -> {
-                    if (result != null) {
-                        log.debug("Succesful production to kafka");
-                    }
-                },
-                exception -> log.error("Failed to produce to kafka", exception));
+        producer.send(topic.name(), "ledger",message);
+        producer.flush();
     }
 
     public void warmUp() {
-        // Produce sample data
-        range(0, REPETITIONS).forEach(i -> {
+        long testStart = System.currentTimeMillis();
+        while((int) ((System.currentTimeMillis() - testStart) / 1000) < 10) {
             publish(WARM_UP, WARM_UP);
-        });
-
-        producer.flush();
+        }
         log.info("warm up done");
     }
 
     @Override
-    public void produceWithPayload(Resource resource, int payloadSize) {
+    public void produceWithPayload(Resource resource, int payloadSize, long delay) {
+        warmUp();
         loadPayload(resource);
-        String startPayload = REPETITIONS + "-" + payloadSize;
+        String startPayload = START_TEST + "-" +  delay + "-" + payloadSize;
+
         publish(START_TEST, startPayload);
-        // Produce sample data
-        range(0, REPETITIONS).forEach(i -> {
-            publish(KEY, payload);
-        });
+        long testStart = System.currentTimeMillis();
+
+        // run test for 10 seconds
+        while((int) ((System.currentTimeMillis() - testStart) / 1000) < 10) {
+            String message = addTimeStamp(payload);
+            publish(KEY, message);
+            try {
+                Thread.sleep(delay);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+
         publish(END_TEST, END_TEST);
 
-        producer.flush();
         log.info("{} messages were produced to topic {}", REPETITIONS, topic.name());
     }
 }

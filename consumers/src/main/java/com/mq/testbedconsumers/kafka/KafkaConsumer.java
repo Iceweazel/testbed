@@ -16,42 +16,26 @@ public class KafkaConsumer extends AbstractConsumer {
 
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(final ConsumerRecord<String, String> consumerRecord) {
-        log.debug("received {} {}", consumerRecord.key(), consumerRecord.value());
+        log.debug("received {} {}", consumerRecord.offset(), consumerRecord.value());
         handleContent(consumerRecord);
     }
 
     private void handleContent(ConsumerRecord<String, String> consumerRecord) {
+        String message = consumerRecord.value();
 
-        switch (consumerRecord.key()) {
-            case WARM_UP:
-                break;
-            case START_TEST:
-                startTest(consumerRecord.value());
-                break;
-            case END_TEST:
-                endTest();
-                break;
-            default:
-                //test data
-                long latency = Instant.now().toEpochMilli() - consumerRecord.timestamp();
-                totalLatency += latency;
-                break;
+        if(message.startsWith(WARM_UP)) {
+            log.debug("warmpup");
+            return;
+        } else if(message.startsWith(START_TEST)) {
+            startTest(message);
+            return;
+        } else if(message.startsWith(END_TEST)) {
+            endTest();
+            return;
+        } else {
+            long latency = System.currentTimeMillis() - Long.valueOf(message.split("-")[0]);
+            totalLatency += latency;
+            messageReceived++;
         }
-    }
-
-    private void endTest() {
-        long avgLatency = totalLatency/repetitions;
-        long timeTaken = Instant.now().toEpochMilli() - testStart;
-        log.info("The test took {} ms with an avg. latency of {} using payloadsize {}"
-                , timeTaken, avgLatency, payloadSize);
-    }
-
-    private void startTest(String value) {
-        totalLatency = 0L;
-        testStart = Instant.now().toEpochMilli();
-        String[] args = value.split("-");
-        repetitions = Integer.parseInt(args[0]);
-        payloadSize = Integer.parseInt(args[1]);
-        log.info("{} with {} repetitions and payloadsize {}", START_TEST, repetitions, payloadSize);
     }
 }

@@ -23,7 +23,7 @@ public class RabbitProducer extends AbstractGenericProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void produceWithPayload(Resource resource, int payloadSize) {
+    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
         loadPayload(resource);
         String startPayload = START_TEST + "-" + REPETITIONS+ "-"+ payloadSize;
         publish(ROUTING_KEY, startPayload);

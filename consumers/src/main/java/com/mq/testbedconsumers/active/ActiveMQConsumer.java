@@ -33,7 +33,7 @@ public class ActiveMQConsumer extends AbstractConsumer implements MessageListene
 
     private void handleContent(String message) {
         if(message.startsWith(WARM_UP)) {
-            log.info("warmpup");
+            log.debug("warmpup");
             return;
         } else if(message.startsWith(START_TEST)) {
             startTest(message);
@@ -41,23 +41,12 @@ public class ActiveMQConsumer extends AbstractConsumer implements MessageListene
         } else if(message.startsWith(END_TEST)) {
             endTest();
             return;
+        } else {
+            //test data
+            long sent = Long.valueOf(message.split("-")[0]);
+            long latency = Instant.now().toEpochMilli() - sent;
+            totalLatency += latency;
         }
         log.debug("Received <" + message + ">");
     }
-
-    private void endTest() {
-        long timeTaken = Instant.now().toEpochMilli() - testStart;
-        log.info("{} took {} ms with a payload size of {} and {} messages",
-                END_TEST, timeTaken, payloadSize, repetitions);
-
-    }
-
-    private void startTest(String message) {
-        testStart = Instant.now().toEpochMilli();
-        String[] args = message.split("-");
-        repetitions = Integer.parseInt(args[1]);
-        payloadSize = Integer.parseInt(args[2]);
-        log.info("{} with {} repetitions and payloadsize {}", START_TEST, repetitions, payloadSize);
-    }
-
 }
