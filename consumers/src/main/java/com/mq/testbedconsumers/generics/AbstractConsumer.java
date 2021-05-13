@@ -21,16 +21,19 @@ public abstract class AbstractConsumer {
     protected int msgPerSecond;
     protected int numSeconds;
 
-    protected void endTest() {
-        long avgLatency = totalLatency/messageReceived;
-        long timeTaken = System.currentTimeMillis() - testStart;
+    protected boolean testStarted = false;
 
-        log.info("The test took {} for {} messages using payloadsize {}, and had avg. latency {}"
-                , timeTaken, messageReceived, payloadSize, avgLatency);
-        
+    protected static TestData testData = new TestData();
+
+    protected void endTest() {
+        testStarted = false;
+        log.info("DONE MEASURING DATA \n -------------");
+        log.info(testData.getData());
+        // testData.reset();
     }
 
     protected void startTest(String value) {
+        testStarted = true;
         numSeconds = 0;
         messageReceived = 0;
         lastSecond = 0;
@@ -40,6 +43,12 @@ public abstract class AbstractConsumer {
         delay = Long.valueOf(args[1]);
         payloadSize = Integer.parseInt(args[2]);
         log.info("{} with {} delay and payloadsize {}", START_TEST, delay, payloadSize);
+    }
+
+    protected void startTest() {
+        testData.reset();
+        testStarted = true;
+        log.info("WARM UP DONE \n -------------");
     }
 
     public AbstractConsumer() {

@@ -34,17 +34,15 @@ public class NatsProducer extends AbstractGenericProducer {
         try {
             return Nats.connect(uri);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public void publish(String key, String message) {
+    public void publish(String message) {
         try {
             natsConnection.publish(topicName, message.getBytes());
             log.info("message published: {}", message);
@@ -56,13 +54,13 @@ public class NatsProducer extends AbstractGenericProducer {
 
     @Override
     public void warmUp() {
-        publish(WARM_UP, WARM_UP);
+        publish(WARM_UP);
     }
 
     @Override
-    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
-        loadPayload(resource);
-        publish(START_TEST, payload);
+    public void publish(byte[] payload) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

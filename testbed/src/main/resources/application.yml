@@ -23,5 +23,8 @@ pulsar:
   service-url: pulsar://localhost:6650
   topic: ledger-1
 
+message:
+  delivery: at_least_once
+
 server:
   port: 9081

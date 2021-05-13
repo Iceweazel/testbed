@@ -22,7 +22,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     @Value("${active-mq.topic}")
     private String topic;
 
-    public void publish(String key, String message) {
+    public void publish(String message) {
         try{
             log.debug("Attempting Send message to Topic: "+ topic);
             jmsTemplate.convertAndSend(topic, message);
@@ -32,25 +32,8 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     }
 
     @Override
-    public void warmUp() {
-        range(0, REPETITIONS).forEach(i -> {
-            log.debug("sending new message");
-            publish("", WARM_UP);
-        });
-    }
-
-    @Override
-    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
-        loadPayload(resource);
-        String startPayload = START_TEST + "-" + REPETITIONS + "-" + payloadSize;
-        publish(START_TEST, startPayload);
-        // Produce sample data
-        range(0, REPETITIONS).forEach(i -> {
-            log.debug("sending new message");
-            String message = addTimeStamp(payload);
-            publish("", message);
-        });
-        publish(END_TEST, END_TEST);
-        log.info("{} messages were produced to topic {}", REPETITIONS, topic);
+    public void publish(byte[] payload) {
+        // TODO Auto-generated method stub
+        
     }
 }

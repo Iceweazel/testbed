@@ -49,7 +49,7 @@ public class PulsarProducer extends AbstractGenericProducer {
     }
 
     @Override
-    public void publish(String key, String message) {
+    public void publish(String message) {
         // Send each message and log message content and ID when successfully received
         try {
             CompletableFuture<MessageId> msgId = producer.sendAsync(message.getBytes());
@@ -60,54 +60,29 @@ public class PulsarProducer extends AbstractGenericProducer {
     }
 
     @Override
-    public void warmUp() {
-        range(0, REPETITIONS).forEach(i -> {
-            log.debug("sending new message");
-            publish("", WARM_UP);
-            if ( i % 10000 == 0) {
-                try {
-                    producer.flush();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-            }
-        });
-        try {
-            producer.flush();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+    public void publish(byte[] payload) {
+        // TODO Auto-generated method stub
+        
     }
 
-    @Override
-    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
-        loadPayload(resource);
-        String startPayload = START_TEST + "-" + REPETITIONS + "-" + payloadSize;
-        publish(START_TEST, startPayload);
-        // Produce sample data
-        try {
-            producer.flush();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        range(0, REPETITIONS).forEach(i -> {
-            log.debug("sending new message");
-            String testLoad = addTimeStamp(payload);
-            publish("", testLoad);
-            if ( i % 10000 == 0) {
-                try {
-                    producer.flush();
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-            }
-        });
-        publish(END_TEST, END_TEST);
-        try {
-            producer.flush();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        log.info("{} messages were produced to topic {}", REPETITIONS, topicName);
-    }
+    // @Override
+    // public void warmUp() {
+    //     range(0, REPETITIONS).forEach(i -> {
+    //         log.debug("sending new message");
+    //         publish(WARM_UP);
+    //         if ( i % 10000 == 0) {
+    //             try {
+    //                 producer.flush();
+    //             } catch (Exception e) {
+    //                 log.error(e.getMessage());
+    //             }
+    //         }
+    //     });
+    //     try {
+    //         producer.flush();
+    //     } catch (Exception e) {
+    //         log.error(e.getMessage());
+    //     }
+    // }
+
 }

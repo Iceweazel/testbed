@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,6 +42,8 @@ public class KafkaConfiguration {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory =
                                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConcurrency(1);
+        factory.setBatchListener(true);
+        factory.getContainerProperties().setIdleBetweenPolls(100);
         factory.setConsumerFactory(consumerFactory);
         return factory;
     }
@@ -59,11 +61,14 @@ public class KafkaConfiguration {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class);
+                ByteArrayDeserializer.class);
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                bootStrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
+        String groupId = consumerGroup + System.currentTimeMillis();
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, offsetReset);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "5000");
 
         if(sseEnabled) {
             props.put("security.protocol", "SSL");
