@@ -44,7 +44,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     protected Resource PAYLOAD_32768_BYTES;
 
     // protected String payload;
-    private byte[] payload;
+    protected byte[] payload;
     private byte[] endPayload = {'1'};
     private byte[] startPayload = {'2'};
 
