@@ -21,7 +21,7 @@ public class KafkaConsumer extends AbstractConsumer {
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(byte[] consumerRecord) {
         // log.debug("received {} {}", consumerRecord.offset(), consumerRecord.value());
-	log.info("Received consumerRec: {}", new String(consumerRecord, StandardCharsets.UTF_8));
+	    log.info("Received consumerRec: {}", new String(consumerRecord, StandardCharsets.UTF_8));
         handleContent(consumerRecord);
     }
 
