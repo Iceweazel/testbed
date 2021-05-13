@@ -9,11 +9,14 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.*;
 import java.time.Instant;
+import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
 public class KafkaConsumer extends AbstractConsumer {
+
+    private CountDownLatch latch = new CountDownLatch(1);
 
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(byte[] consumerRecord) {

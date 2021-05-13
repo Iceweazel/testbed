@@ -44,7 +44,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     protected Resource PAYLOAD_32768_BYTES;
 
     // protected String payload;
-    protected byte[] payload;
+    private byte[] payload;
     private byte[] endPayload = {'1'};
     private byte[] startPayload = {'2'};
 
@@ -59,6 +59,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
             byte[] data = FileCopyUtils.copyToByteArray(in);
             payload = new byte[data.length];
             payload = data;
+            log.info("Payload loaded with: {}", new String(payload, StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
