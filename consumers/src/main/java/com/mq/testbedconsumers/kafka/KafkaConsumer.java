@@ -3,11 +3,11 @@ package com.mq.testbedconsumers.kafka;
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.bouncycastle.util.test.Test;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.*;
 import java.time.Instant;
 
 @Slf4j
@@ -18,6 +18,7 @@ public class KafkaConsumer extends AbstractConsumer {
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(byte[] consumerRecord) {
         // log.debug("received {} {}", consumerRecord.offset(), consumerRecord.value());
+	log.info("Received consumerRec: {}", new String(consumerRecord, StandardCharsets.UTF_8));
         handleContent(consumerRecord);
     }
 
