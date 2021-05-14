@@ -20,13 +20,10 @@ public class KafkaConsumer extends AbstractConsumer {
 
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(byte[] consumerRecord) {
-        // log.debug("received {} {}", consumerRecord.offset(), consumerRecord.value());
-	    log.info("Received consumerRec: {}", new String(consumerRecord, StandardCharsets.UTF_8));
         handleContent(consumerRecord);
     }
 
     private void handleContent(byte[] message) {
-        // byte[] message = consumerRecord.value();
 
         if (message.length == 1) {
             //either start or end test sent
@@ -34,9 +31,11 @@ public class KafkaConsumer extends AbstractConsumer {
                 log.info(END_TEST);
                 endTest();
             } else {
+		log.info("WARM_UP_DONE---------");
                 log.info(START_TEST);
                 startTest();
             }
+	    return;
         }
 
         if(testStarted) {

@@ -53,6 +53,13 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         return new String(now + "-" + message);
     }
 
+    public void loadPayload(int payloadSize) {
+	    payload = new byte[payloadSize];
+	    for(int i = 0; i < payloadSize; i++) {
+		    payload[i] = 'a';
+	    }
+    }
+
     public void loadPayload(Resource r) {
         try {
             InputStream in = r.getInputStream();
@@ -88,7 +95,8 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         int incrementThroughPut = (int) (maxThroughPut - minThroughput) / 30;
         log.info("Max Through Put {} with payload size {}", maxThroughPut, payloadSize);
         log.info("Min Through Put {} with payload size {}", minThroughput, payloadSize);
-        loadPayload(resource);
+	loadPayload(payloadSize);
+        //loadPayload(resource);
 
         runTestUntilMaxLoad(currentThroughPut, maxThroughPut, incrementThroughPut, payloadSize);
     }

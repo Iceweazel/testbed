@@ -29,7 +29,7 @@ public abstract class AbstractConsumer {
         testStarted = false;
         log.info("DONE MEASURING DATA \n -------------");
         log.info(testData.getData());
-        // testData.reset();
+        testData.reset();
     }
 
     protected void startTest(String value) {
@@ -48,7 +48,6 @@ public abstract class AbstractConsumer {
     protected void startTest() {
         testData.reset();
         testStarted = true;
-        log.info("WARM UP DONE \n -------------");
     }
 
     public AbstractConsumer() {
