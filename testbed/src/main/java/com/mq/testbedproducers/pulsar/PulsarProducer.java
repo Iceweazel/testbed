@@ -41,7 +41,7 @@ public class PulsarProducer extends AbstractGenericProducer {
             producer = client.newProducer()
                     .topic(topicName)
                     .messageRoutingMode(MessageRoutingMode.SinglePartition)
-                    .compressionType(CompressionType.LZ4)
+                    .compressionType(CompressionType.LZ4)           
                     .create();
         } catch (PulsarClientException e) {
             e.printStackTrace();
@@ -61,7 +61,6 @@ public class PulsarProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-        // TODO Auto-generated method stub
         try {
             CompletableFuture<MessageId> msgId = producer.sendAsync(payload);
             log.debug("Published message '"+payload+"' with the ID "+msgId);

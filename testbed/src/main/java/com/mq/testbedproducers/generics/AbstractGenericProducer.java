@@ -75,7 +75,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     @EventListener(ApplicationStartedEvent.class)
     private void produce() {
         log.info("PRODUCE --------------");
-        produceWithPayload(PAYLOAD_8_BYTES, 8, 300000);
+        //produceWithPayload(PAYLOAD_8_BYTES, 8, 300000);
 
         produceWithPayload(PAYLOAD_64_BYTES, 64, 300000);
 
@@ -95,7 +95,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         int incrementThroughPut = (int) (maxThroughPut - minThroughput) / 30;
         log.info("Max Through Put {} with payload size {}", maxThroughPut, payloadSize);
         log.info("Min Through Put {} with payload size {}", minThroughput, payloadSize);
-	loadPayload(payloadSize);
+	    loadPayload(payloadSize);
         //loadPayload(resource);
 
         runTestUntilMaxLoad(currentThroughPut, maxThroughPut, incrementThroughPut, payloadSize);
