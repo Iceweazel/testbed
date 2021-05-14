@@ -50,6 +50,27 @@ public abstract class AbstractConsumer {
         testStarted = true;
     }
 
+    protected void handleContent(byte[] message) {
+
+        if (message.length == 1) {
+            //either start or end test sent
+            if (message[0] == '1') {
+                log.info(END_TEST);
+                endTest();
+            } else {
+		        log.info("WARM_UP_DONE---------");
+                log.info(START_TEST);
+                startTest();
+            }
+	    return;
+        }
+
+        if(testStarted) {
+            testData.addMessage(message);
+            return;
+        }
+    }
+
     public AbstractConsumer() {
         this.numSeconds = 0;
         this.messageReceived = 0;

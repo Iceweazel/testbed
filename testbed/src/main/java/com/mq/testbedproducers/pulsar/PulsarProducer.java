@@ -62,27 +62,12 @@ public class PulsarProducer extends AbstractGenericProducer {
     @Override
     public void publish(byte[] payload) {
         // TODO Auto-generated method stub
-        
+        try {
+            CompletableFuture<MessageId> msgId = producer.sendAsync(payload);
+            log.debug("Published message '"+payload+"' with the ID "+msgId);
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        }
     }
-
-    // @Override
-    // public void warmUp() {
-    //     range(0, REPETITIONS).forEach(i -> {
-    //         log.debug("sending new message");
-    //         publish(WARM_UP);
-    //         if ( i % 10000 == 0) {
-    //             try {
-    //                 producer.flush();
-    //             } catch (Exception e) {
-    //                 log.error(e.getMessage());
-    //             }
-    //         }
-    //     });
-    //     try {
-    //         producer.flush();
-    //     } catch (Exception e) {
-    //         log.error(e.getMessage());
-    //     }
-    // }
 
 }

@@ -50,27 +50,27 @@ public class PulsarConsumer extends AbstractConsumer implements MessageListener 
         }
     }
 
-    private void handleContent(String message) {
+    // private void handleContent(String message) {
 
-        if(message.startsWith(WARM_UP)) {
-            log.debug("warmpup");
-            return;
-        } else if(message.startsWith(START_TEST)) {
-            startTest(message);
-            return;
-        } else if(message.startsWith(END_TEST)) {
-            endTest();
-            return;
-        } else {
-            messageReceived++;
-        }
-    }
+    //     if(message.startsWith(WARM_UP)) {
+    //         log.debug("warmpup");
+    //         return;
+    //     } else if(message.startsWith(START_TEST)) {
+    //         startTest(message);
+    //         return;
+    //     } else if(message.startsWith(END_TEST)) {
+    //         endTest();
+    //         return;
+    //     } else {
+    //         messageReceived++;
+    //     }
+    // }
 
 	@Override
 	public void received(Consumer arg0, Message arg1) {
-        String content = new String(arg1.getData());
-        handleContent(content);
-        log.debug("Received message '"+content+"' with ID "+arg1.getMessageId());
+        //String content = new String(arg1.getData());
+        handleContent(arg1.getData());
+        log.debug("Received message '"+arg1.getData()+"' with ID "+arg1.getMessageId());
         try {
             extracted(arg0, arg1);
         } catch (Exception e) {
