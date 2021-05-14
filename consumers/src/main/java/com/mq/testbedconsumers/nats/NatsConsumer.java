@@ -15,7 +15,6 @@ import io.nats.client.Connection;
 import io.nats.client.Dispatcher;
 import io.nats.client.Message;
 import io.nats.client.Nats;
-import io.nats.client.Subscription;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

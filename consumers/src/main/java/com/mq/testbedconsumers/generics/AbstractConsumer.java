@@ -29,7 +29,6 @@ public abstract class AbstractConsumer {
         testStarted = false;
         log.info("DONE MEASURING DATA \n -------------");
         log.info(testData.getData());
-        testData.reset();
     }
 
     protected void startTest(String value) {
