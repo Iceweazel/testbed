@@ -55,8 +55,7 @@ public class NatsConsumer extends AbstractConsumer {
 
     private void handleContent(Message msg) {
         if(msg != null && msg.getData() != null) {
-            log.info("Received message: {} on subject {}", 
-                new String(msg.getData(), StandardCharsets.UTF_8), msg.getSubject());
+           handleContent(msg.getData());
         }
     }
 }

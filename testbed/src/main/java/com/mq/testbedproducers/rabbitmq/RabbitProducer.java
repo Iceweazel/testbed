@@ -23,35 +23,13 @@ public class RabbitProducer extends AbstractGenericProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void produceWithPayload(Resource resource, int payloadSize, long wait) {
-        loadPayload(resource);
-        String startPayload = START_TEST + "-" + REPETITIONS+ "-"+ payloadSize;
-        publish(startPayload);
-        // Produce sample data
-        range(0, REPETITIONS).forEach(i -> {
-            log.debug("sending new message");
-            publish(payload);
-        });
-        publish(END_TEST);
-
-        log.info("{} messages were produced to topic {}", REPETITIONS, RabbitConfig.topicExchangeName);
-    }
-
     @Override
     public void publish(String message) {
         rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, ROUTING_KEY, message);
     }
 
     @Override
-    public void warmUp() {
-        range(0, REPETITIONS).forEach(i -> {
-            publish(WARM_UP);
-        });
-    }
-
-    @Override
     public void publish(byte[] payload) {
-        // TODO Auto-generated method stub
-        
+        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, ROUTING_KEY, payload);
     }
 }

@@ -105,7 +105,7 @@ public class TestData {
         double mean = getAvgMillisLatency();
 
         long variance = 0;
-        for(double xi:list){
+        for(double xi : list){
             variance += Math.pow((double)xi- mean,2);
         }
         return variance/(list.size()-1);
@@ -125,7 +125,7 @@ public class TestData {
     }
 
     public static long getTimestamp (byte[] data){
-        byte[] timestamp = new byte[8];
+        byte[] timestamp = new byte[Long.BYTES];
         for(int i = 0; i < timestamp.length; i++){
             timestamp[i] = data[i];
         }

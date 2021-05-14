@@ -33,7 +33,11 @@ public class ActiveMQProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-        // TODO Auto-generated method stub
-        
+        try{
+            log.debug("Attempting Send message to Topic: "+ topic);
+            jmsTemplate.convertAndSend(topic, payload);
+        } catch(Exception e){
+            log.error("Recieved Exception during send Message: ", e);
+        }
     }
 }

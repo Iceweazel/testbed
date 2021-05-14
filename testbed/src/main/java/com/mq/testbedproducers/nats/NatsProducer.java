@@ -53,14 +53,13 @@ public class NatsProducer extends AbstractGenericProducer {
     }
 
     @Override
-    public void warmUp() {
-        publish(WARM_UP);
-    }
-
-    @Override
     public void publish(byte[] payload) {
-        // TODO Auto-generated method stub
-        
+        try {
+            natsConnection.publish(topicName, payload);
+            log.debug("message published: {}", payload);
+        } catch (Exception ioe) {
+            log.error("Error publishing message: {} to {} ", payload.toString(), topicName, ioe);
+        }   
     }
     
 }
