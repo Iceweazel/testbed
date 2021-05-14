@@ -125,8 +125,8 @@ public class TestData {
     }
 
     public static long getTimestamp (byte[] data){
-        byte[] timestamp = new byte[8];
-        for(int i=0; i<data.length; i++){
+        byte[] timestamp = new byte[data.length];
+        for(int i = 0; i < data.length; i++){
             timestamp[i] = data[i];
         }
         return bytesToLong(timestamp);
