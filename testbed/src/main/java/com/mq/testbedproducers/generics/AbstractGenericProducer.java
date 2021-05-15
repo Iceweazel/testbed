@@ -140,13 +140,14 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
                 sendWithTimeStamp();
                 messagesSent++;
             }
-            if (currentTime - testStart > RUN_TIME_MS) {
-                log.info("Producer has sent {} messages per second at current tp {}.", messagesSent, currentThroughPut);
+            if (currentTime - lastTimeStamp > RUN_TIME_MS) {
+                log.info("Producer has sent {} messages per second at current tp {}.", messagesSent/10, currentThroughPut);
                 messagesSent = 0;
                 lastTimeStamp = currentTime;
             }
             counter++;
             counter = counter % 10;
+            threadWait(1);
         } while (currentTime - testStart < RUN_TIME_MS);
     }
 
@@ -176,6 +177,14 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         log.info("warm up done");
     }
 
+    @Override
+    private void threadWait(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
     /**
      * both of these long functions are from https://stackoverflow.com/questions/4485128/how-do-i-convert-long-to-byte-and-back-in-java
      * @param x

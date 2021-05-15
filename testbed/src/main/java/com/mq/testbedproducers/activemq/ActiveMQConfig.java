@@ -37,6 +37,7 @@ public class ActiveMQConfig {
         JmsTemplate jmsTemplate = new JmsTemplate();
         jmsTemplate.setConnectionFactory(connectionFactory());
         jmsTemplate.setPubSubDomain(true);  // enable for Pub Sub to topic. Not Required for Queue.
+        jmsTemplate.setDeliveryDelay(10);
         return jmsTemplate;
     }
 

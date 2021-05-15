@@ -92,10 +92,11 @@ public class TestData {
     }
 
     public int avgThroughput(){
-        if (System.currentTimeMillis()-lastTimeStampMillis == 0) {
-            return numberOfMessagesReceived/1000;
+        int now = System.currentTimeMillis();
+        if (now - lastTimeStampMillis == 0) {
+            return numberOfMessagesReceived / 1000;
         } else {
-            return numberOfMessagesReceived/(int)((System.currentTimeMillis()-lastTimeStampMillis)/1000);
+            return numberOfMessagesReceived / (int) ((now - lastTimeStampMillis) / 1000);
         }
 
     }
