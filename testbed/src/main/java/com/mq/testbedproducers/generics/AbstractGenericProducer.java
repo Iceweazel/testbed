@@ -74,11 +74,11 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     @EventListener(ApplicationStartedEvent.class)
     private void produce() {
         log.info("PRODUCE --------------");
-        //produceWithPayload(PAYLOAD_8_BYTES, 8, 150000);
+        produceWithPayload(PAYLOAD_8_BYTES, 8, 150000);
 
-        produceWithPayload(PAYLOAD_64_BYTES, 64, 150000);
+        // produceWithPayload(PAYLOAD_64_BYTES, 64, 150000);
 
-        produceWithPayload(PAYLOAD_512_BYTES, 512, 70000);
+        // produceWithPayload(PAYLOAD_512_BYTES, 512, 70000);
 
         // produceWithPayload(PAYLOAD_4096_BYTES, 4096, 100);
         // produceWithPayload(PAYLOAD_32768_BYTES, 32678, 100);
