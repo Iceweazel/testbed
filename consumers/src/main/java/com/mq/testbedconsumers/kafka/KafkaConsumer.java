@@ -21,8 +21,9 @@ public class KafkaConsumer extends AbstractConsumer {
 
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(@Payload List<byte[]> messages) {
-        for (byte[] consumerRecord : messages)
-            handleContent(consumerRecord);
+        if(messages != null)
+            for (byte[] consumerRecord : messages)
+                handleContent(consumerRecord);
     }
 
 }

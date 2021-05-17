@@ -128,7 +128,6 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         int counter = 0;
 
         int sendLimit = (currentThroughPut > ONE_SECOND_MS) ? ((int) currentThroughPut % ONE_SECOND_MS) / 100 : (int) currentThroughPut / 100;
-
         log.info("test with sendlimit {}", sendLimit);
 
         do {

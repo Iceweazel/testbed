@@ -78,7 +78,7 @@ public class TestData {
         sizeInBytes = data.length;
         long arrivalTime = System.nanoTime();
         long sentTime = getTimestamp(data);
-        long latency = arrivalTime-sentTime;
+        long latency = arrivalTime - sentTime;
         totalLatency += (latency);
         numberOfMessagesReceived++;
         currentTimeMillis = System.currentTimeMillis();
