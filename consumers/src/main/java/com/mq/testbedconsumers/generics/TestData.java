@@ -82,7 +82,7 @@ public class TestData {
         totalLatency += (latency);
         numberOfMessagesReceived++;
         currentTimeMillis = System.currentTimeMillis();
-        list.add(latency);
+        list.add((double) latency);
         if(currentTimeMillis - lastTimeStampMillis>30000){
             //reset();
         }
@@ -93,7 +93,7 @@ public class TestData {
     }
 
     public int avgThroughput(){
-        int now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         if (now - lastTimeStampMillis == 0) {
             return numberOfMessagesReceived / 1000;
         } else {
