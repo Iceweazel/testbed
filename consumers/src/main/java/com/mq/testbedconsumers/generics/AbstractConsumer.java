@@ -29,7 +29,6 @@ public abstract class AbstractConsumer {
     protected void handleContent(byte[] message) {
         
         if (message.length == 1) {
-            log.info("Message Received: {}", new String(message));
             //either start or end test sent
             if (message[0] == '1') {
                 log.info(END_TEST);
@@ -39,6 +38,7 @@ public abstract class AbstractConsumer {
                 startTest();
             } else {
                 log.info("WARM UP DONE--------------");
+                testStarted = false;
                 if (testData == null)
                     testData = new TestData();
 
