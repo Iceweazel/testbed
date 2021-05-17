@@ -27,7 +27,7 @@ public abstract class AbstractConsumer {
     }
 
     protected void handleContent(byte[] message) {
-        log.info("Message Received: {}", new String(message));
+        // log.info("Message Received: {}", new String(message));
         if (message.length == 1) {
             //either start or end test sent
             if (message[0] == '1') {
