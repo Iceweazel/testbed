@@ -177,7 +177,6 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         log.info("warm up done");
     }
 
-    @Override
     private void threadWait(long ms) {
         try {
             Thread.sleep(ms);
