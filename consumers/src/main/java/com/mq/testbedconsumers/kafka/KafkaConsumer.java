@@ -15,6 +15,11 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumer extends AbstractConsumer {
 
     @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
+    public void consumer(byte[] payload) {
+        handleContent(payload);
+    }
+
+    @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
     public void consume(@Payload List<byte[]> messages) {
         for (byte[] consumerRecord : messages)
             handleContent(consumerRecord);

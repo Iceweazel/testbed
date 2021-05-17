@@ -120,13 +120,16 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     private void testWithPayload(int currentThroughPut) {
         log.info("Produce with curr. TP  {}", currentThroughPut);
         long testStart = System.currentTimeMillis();
+        long lastTimeStamp = testStart;
+
         long currentTime;
 
         int messagesSent = 0;
-        long lastTimeStamp = 0L;
+        int counter = 0;
 
         int sendLimit = (currentThroughPut > ONE_SECOND_MS) ? ((int) currentThroughPut % ONE_SECOND_MS) / 100 : (int) currentThroughPut / 100;
-        int counter = 0;
+
+        log.info("test with sendlimit {}", sendLimit);
 
         do {
             currentTime = System.currentTimeMillis();
