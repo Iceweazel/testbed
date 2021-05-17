@@ -7,18 +7,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TestData {
+
     int numberOfMessagesReceived;
-    long totalNano;
+    long totalLatency;
     long currentTimeMillis;
     long lastTimeStampMillis;
-
     int sizeInBytes;
-    String settings;
-    int avg;
     ArrayList<Double> list;
 
     public TestData() {
+        totalLatency = 0L;
         numberOfMessagesReceived = 0;
+        sizeInBytes = 8;
         list = new ArrayList<>();
     }
 
@@ -30,7 +30,7 @@ public class TestData {
         if(numberOfMessagesReceived == 0) {
             return 0;
         } else {
-            return totalNano / numberOfMessagesReceived;
+            return totalLatency / numberOfMessagesReceived;
         }
     }
 
@@ -42,12 +42,12 @@ public class TestData {
         this.numberOfMessagesReceived = numberOfMessagesReceived;
     }
 
-    public long getTotalNano() {
-        return totalNano;
+    public long gettotalLatency() {
+        return totalLatency;
     }
 
-    public void setTotalNano(long totalNano) {
-        this.totalNano = totalNano;
+    public void settotalLatency(long totalLatency) {
+        this.totalLatency = totalLatency;
     }
 
     public long getCurrentTimeMillis() {
@@ -69,7 +69,7 @@ public class TestData {
     public void reset() {
         lastTimeStampMillis = currentTimeMillis;
         numberOfMessagesReceived = 0;
-        totalNano = 0;
+        totalLatency = 0;
         list.clear();
     }
 
@@ -79,9 +79,10 @@ public class TestData {
         long arrivalTime = System.nanoTime();
         long sentTime = getTimestamp(data);
         long latency = arrivalTime-sentTime;
-        totalNano += (latency);
+        totalLatency += (latency);
         numberOfMessagesReceived++;
         currentTimeMillis = System.currentTimeMillis();
+        list.add(latency);
         if(currentTimeMillis - lastTimeStampMillis>30000){
             //reset();
         }

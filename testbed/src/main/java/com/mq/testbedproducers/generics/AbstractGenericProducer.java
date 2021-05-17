@@ -26,8 +26,6 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     protected static final String KEY = "test";
     protected static final String WARM_UP = "warm_up";
 
-    // private static ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-
     @Value("classpath:payloads/payload_8_bytes.txt")
     protected Resource PAYLOAD_8_BYTES;
 
@@ -47,6 +45,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     protected byte[] payload;
     private byte[] endPayload = {'1'};
     private byte[] startPayload = {'2'};
+    private byte[] endWarmUp = {'3'};
 
     public String addTimeStamp(String message) {
         long now = System.currentTimeMillis();
@@ -169,6 +168,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         while((int) ((System.currentTimeMillis() - testStart) / 1000) < 10) {
             publish(payload);
         }
+        publish(endWarmUp);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
