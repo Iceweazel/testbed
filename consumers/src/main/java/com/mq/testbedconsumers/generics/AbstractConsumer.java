@@ -34,7 +34,7 @@ public abstract class AbstractConsumer {
             if (message[0] == '1') {
                 log.info(END_TEST);
                 endTest();
-            } else if (message[1] == '2') {
+            } else if (message[0] == '2') {
                 log.info(START_TEST);
                 startTest();
             } else {
