@@ -19,8 +19,8 @@ kafka:
   sse-enabled: false
 
 rabbit:
-  user: master
-  password: master
+  user: guest
+  password: guest
   host: localhost
   port: 5672
   sse-enabled: false
