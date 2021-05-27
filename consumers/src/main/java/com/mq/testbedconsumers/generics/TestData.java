@@ -2,29 +2,35 @@ package com.mq.testbedconsumers.generics;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TestData {
 
-    int numberOfMessagesReceived;
-    long totalLatency;
-    long currentTimeMillis;
-    long lastTimeStampMillis;
-    int sizeInBytes;
-    ArrayList<Double> list;
+    public static final String FILE_NAME = "results.txt";
+
+    private int numberOfMessagesReceived;
+    private long totalLatency;
+    private long currentTimeMillis;
+    private long lastTimeStampMillis;
+    private int sizeInBytes;
+    private ArrayList<Double> list;
+    private long minLatency;
+    private long maxLatency;
 
     public TestData() {
         totalLatency = 0L;
         numberOfMessagesReceived = 0;
         sizeInBytes = 8;
         list = new ArrayList<>();
+	minLatency = 1000L;
+	maxLatency = 0L;
     }
 
-    public int getNumberOfMessagesReceived() {
-        return numberOfMessagesReceived;
-    }
 
     public long getMeanLatency() {
         if(numberOfMessagesReceived == 0) {
@@ -38,39 +44,21 @@ public class TestData {
         return  (double)getMeanLatency()/Math.pow(10,6);
     }
 
-    public void setNumberOfMessagesReceived(int numberOfMessagesReceived) {
-        this.numberOfMessagesReceived = numberOfMessagesReceived;
+    public double getMinMillisLatency() {
+	return (double) minLatency/Math.pow(10,6);
     }
 
-    public long gettotalLatency() {
-        return totalLatency;
-    }
-
-    public void settotalLatency(long totalLatency) {
-        this.totalLatency = totalLatency;
-    }
-
-    public long getCurrentTimeMillis() {
-        return currentTimeMillis;
-    }
-
-    public void setCurrentTimeMillis(long currentTimeMillis) {
-        this.currentTimeMillis = currentTimeMillis;
-    }
-
-    public long getLastTimeStampMillis() {
-        return lastTimeStampMillis;
-    }
-
-    public void setLastTimeStampMillis(long lastTimeStampMillis) {
-        this.lastTimeStampMillis = lastTimeStampMillis;
+    public double getMaxMillisLatency() {
+	return (double) maxLatency/Math.pow(10,6);
     }
 
     public void reset() {
         lastTimeStampMillis = currentTimeMillis;
         numberOfMessagesReceived = 0;
-        totalLatency = 0;
+        totalLatency = 0L;
         list.clear();
+	minLatency = 1000L;
+	maxLatency = 0L;
     }
 
     public void addMessage(byte[] data) {
@@ -80,16 +68,18 @@ public class TestData {
         long sentTime = getTimestamp(data);
         long latency = arrivalTime - sentTime;
         totalLatency += (latency);
+	if (latency < minLatency)
+	    minLatency = latency;
+
+	if(latency > maxLatency)
+            maxLatency = latency;
+
         numberOfMessagesReceived++;
         currentTimeMillis = System.currentTimeMillis();
         list.add((double) latency);
         if(currentTimeMillis - lastTimeStampMillis>30000){
             //reset();
         }
-    }
-
-    public void endSubTest(){
-
     }
 
     public int avgThroughput(){
@@ -113,9 +103,20 @@ public class TestData {
         return variance/(list.size()-1);
     }
 
-    String getData(){
+    public String getData(){
         // throughput, latency(ms)
-        return sizeInBytes + ","+ avgThroughput() + "," + getAvgMillisLatency();
+        return sizeInBytes + ","+ avgThroughput() + "," + getAvgMillisLatency() + "\n" + getMinMillisLatency() + "," + getMaxMillisLatency();
+    }
+
+    public void writeToFile() {
+        try {
+	    BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true));
+	    writer.append(getData());
+	    writer.append("\n");
+            writer.close();
+	} catch (IOException e) {
+           e.printStackTrace();
+	}
     }
 
 

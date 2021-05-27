@@ -49,6 +49,12 @@ public class PulsarProducer extends AbstractGenericProducer {
     }
 
     @Override
+    public void flush() {
+	    return;
+    }
+   
+
+    @Override
     public void publish(String message) {
         // Send each message and log message content and ID when successfully received
         try {

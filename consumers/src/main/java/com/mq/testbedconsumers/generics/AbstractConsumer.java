@@ -12,7 +12,7 @@ public abstract class AbstractConsumer {
     protected static final String END_TEST = "end_test";
     protected static final String WARM_UP = "warm_up";
 
-    protected boolean testStarted = false;
+    protected static boolean testStarted = false;
 
     private static TestData testData = new TestData();
 
@@ -20,6 +20,7 @@ public abstract class AbstractConsumer {
         testStarted = false;
         log.info("DONE MEASURING DATA \n -------------");
         log.info(testData.getData());
+	testData.writeToFile();
     }
 
     protected void startTest() {
@@ -36,21 +37,22 @@ public abstract class AbstractConsumer {
             } else if (message[0] == '2') {
                 log.info(START_TEST);
                 startTest();
-            } else {
+            } else if (message[0] == '3') {
                 log.info("WARM UP DONE--------------");
                 testStarted = false;
                 if (testData == null)
                     testData = new TestData();
 
                 testData.reset();
-            }
-	        return;
+            } else {
+		    log.info("END TEST---------------------");
+		}
+	    return;
         }
+	
 
-        if(testStarted) {
+	if (testStarted)
             testData.addMessage(message);
-            return;
-        }
     }
 
     public AbstractConsumer() {

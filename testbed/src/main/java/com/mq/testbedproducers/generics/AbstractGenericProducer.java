@@ -43,10 +43,11 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 
     // protected String payload;
     protected byte[] payload;
-    private byte[] endPayload = {'1'};
-    private byte[] startPayload = {'2'};
-    private byte[] endWarmUp = {'3'};
-
+    private static final byte[] endPayload = {'1'};
+    private static final byte[] startPayload = {'2'};
+    private static final byte[] endWarmUp = {'3'};
+    private static final byte[] endTest = {'4'};
+	
     public String addTimeStamp(String message) {
         long now = System.currentTimeMillis();
         return new String(now + "-" + message);
@@ -57,6 +58,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 	    for(int i = 0; i < payloadSize; i++) {
 		    payload[i] = 'a';
 	    }
+	    log.info("payload loaded with {}", new String(payload));
     }
 
     public void loadPayload(Resource r) {
@@ -74,14 +76,15 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     @EventListener(ApplicationStartedEvent.class)
     private void produce() {
         log.info("PRODUCE --------------");
-        produceWithPayload(PAYLOAD_8_BYTES, 8, 150000);
+        produceWithPayload(PAYLOAD_8_BYTES, 8, 100000);
 
-        // produceWithPayload(PAYLOAD_64_BYTES, 64, 150000);
+        produceWithPayload(PAYLOAD_64_BYTES, 64, 100000);
 
-        // produceWithPayload(PAYLOAD_512_BYTES, 512, 70000);
+        produceWithPayload(PAYLOAD_512_BYTES, 512, 25000);
 
-        // produceWithPayload(PAYLOAD_4096_BYTES, 4096, 100);
-        // produceWithPayload(PAYLOAD_32768_BYTES, 32678, 100);
+        produceWithPayload(PAYLOAD_4096_BYTES, 4096, 10000);
+        produceWithPayload(PAYLOAD_32768_BYTES, 32678, 1000);
+	publish(endTest);
     }
 
     @Override
@@ -90,29 +93,31 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         log.info("Produce with payload size {}", payloadSize);
         //load the neccessary test variables and payload first
         int minThroughput = (int) (maxThroughPut * 0.15);
-        int currentThroughPut = minThroughput;
+        int currentThroughPut = minThroughput; //minThroughput;
         int incrementThroughPut = (int) (maxThroughPut - minThroughput) / 30;
         log.info("Max Through Put {} with payload size {}", maxThroughPut, payloadSize);
         log.info("Min Through Put {} with payload size {}", minThroughput, payloadSize);
-	    loadPayload(payloadSize);
-        //loadPayload(resource);
+	loadPayload(payloadSize);
 
         runTestUntilMaxLoad(currentThroughPut, maxThroughPut, incrementThroughPut, payloadSize);
     }
 
     private void runTestUntilMaxLoad(int currentThroughPut, int maxThroughPut, int incrementThroughPut, int payloadSize) {
         while(currentThroughPut < maxThroughPut) {
-            if(currentThroughPut >= 100) {
-                warmUp();
+                warmUp(currentThroughPut);
+		flush();
                 publish(startPayload);
+		flush();
                 testWithPayload(currentThroughPut);
+		flush();
                 publish(endPayload);
+		flush();
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     log.error(e.getMessage());
                 }
-            }
+           
             currentThroughPut += incrementThroughPut;
         }
     }
@@ -123,33 +128,31 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         long lastTimeStamp = testStart;
 
         long currentTime;
+	long eachRoundTime;
+	long timeTaken;
 
         int messagesSent = 0;
-        int counter = 0;
-
-        int sendLimit = (currentThroughPut > ONE_SECOND_MS) ? ((int) currentThroughPut % ONE_SECOND_MS) / 100 : (int) currentThroughPut / 100;
-        log.info("test with sendlimit {}", sendLimit);
 
         do {
             currentTime = System.currentTimeMillis();
 
-            if(sendLimit > counter) {
+	    for(int i = 0; i < currentThroughPut; i++) {
                 sendWithTimeStamp();
                 messagesSent++;
             }
-            for(int i = 0; i < currentThroughPut/ONE_SECOND_MS; i++) {
-                sendWithTimeStamp();
-                messagesSent++;
-            }
+	    
             if (currentTime - lastTimeStamp > RUN_TIME_MS) {
-                log.info("Producer has sent {} messages per second at current tp {}.", messagesSent/10, currentThroughPut);
-                messagesSent = 0;
-                lastTimeStamp = currentTime;
+		break;
             }
-            counter++;
-            counter = counter % 10;
-            threadWait(1);
+
+	    eachRoundTime = System.currentTimeMillis();
+	    timeTaken = eachRoundTime - currentTime;
+
+	    if (timeTaken < ONE_SECOND_MS)
+		threadWait(ONE_SECOND_MS - timeTaken); //wait rest of the second
+
         } while (currentTime - testStart < RUN_TIME_MS);
+	log.info("messages sent: {}", messagesSent);
     }
 
     private void sendWithTimeStamp() {
@@ -165,11 +168,9 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     }
 
     @Override
-    public void warmUp() {
+    public void warmUp(int currentThroughPut) {
         long testStart = System.currentTimeMillis();
-        while((int) ((System.currentTimeMillis() - testStart) / 1000) < 10) {
-            publish(payload);
-        }
+	testWithPayload(currentThroughPut);
         publish(endWarmUp);
         try {
             Thread.sleep(1000);

@@ -24,6 +24,11 @@ public class RabbitProducer extends AbstractGenericProducer {
     }
 
     @Override
+    public void flush() {
+	    return;
+    }
+
+    @Override
     public void publish(String message) {
         rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, ROUTING_KEY, message);
     }

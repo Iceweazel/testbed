@@ -32,6 +32,9 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     }
 
     @Override
+    public void flush() { return;}
+
+    @Override
     public void publish(byte[] payload) {
         try{
             log.debug("Attempting Send message to Topic: "+ topic);

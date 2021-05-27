@@ -25,6 +25,11 @@ public class KafkaProducer extends AbstractGenericProducer {
     }
 
     @Override
+    public void flush() {
+	    producer.flush();
+    }
+
+    @Override
     public void publish(byte[] message) {
         producer.send(topic.name(), "ledger",message);
         //producer.flush();

@@ -42,6 +42,11 @@ public class NatsProducer extends AbstractGenericProducer {
     }
 
     @Override
+    public void flush() {
+	    return;
+    }
+
+    @Override
     public void publish(String message) {
         try {
             natsConnection.publish(topicName, message.getBytes());

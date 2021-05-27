@@ -58,10 +58,7 @@ public class KafkaConfiguration {
         } else if (messageDelivery.equals(ConfigUtils.AT_LEAST_ONCE)) {
             props.put(ProducerConfig.ACKS_CONFIG, "1");
             props.put(ProducerConfig.LINGER_MS_CONFIG, "2");
-        } else {
-            props.put(ProducerConfig.ACKS_CONFIG, "-1");
-            props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
-        }
+        } 
 
 
         if(sseEnabled) {

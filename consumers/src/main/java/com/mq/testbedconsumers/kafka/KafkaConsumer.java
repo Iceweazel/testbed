@@ -14,16 +14,19 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
 public class KafkaConsumer extends AbstractConsumer {
 
-    // @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
-    // public void consumer(byte[] payload) {
-    //     handleContent(payload);
-    // }
+    private static final String topicName = "ledger-1";
 
-    @KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
-    public void consume(@Payload List<byte[]> messages) {
-        if(messages != null)
-            for (byte[] consumerRecord : messages)
-                handleContent(consumerRecord);
+    @KafkaListener(topics = topicName)
+    public void consumer(byte[] payload) {
+	 // log.info("payload received is {}", new String(payload));
+         handleContent(payload);
     }
+
+    //@KafkaListener(topics = topicName, containerFactory = "kafkaListenerContainerFactory")
+    //public void consume(@Payload List<byte[]> messages) {
+    //    if(messages != null)
+    //        for (byte[] consumerRecord : messages)
+    //            handleContent(consumerRecord);
+    //}
 
 }
