@@ -11,7 +11,7 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       max-poll-interval-ms: 100
       enable-auto-commit: true
-      auto-commit-interval-ms: 101
+      auto-commit-interval-ms: 99999999
 
 testing:
   mq: ''

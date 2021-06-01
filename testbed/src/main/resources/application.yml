@@ -24,7 +24,7 @@ pulsar:
   topic: ledger-1
 
 message:
-  delivery: only_once
+  delivery: at_least_once 
 
 server:
   port: 9081

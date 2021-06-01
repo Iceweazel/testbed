@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,8 +30,21 @@ public class TestData {
         list = new ArrayList<>();
 	minLatency = 1000L;
 	maxLatency = 0L;
+	lastTimeStampMillis = System.currentTimeMillis();
+	currentTimeMillis = System.currentTimeMillis();
     }
 
+
+    public double getMedianLatency() {
+	Object[] numArray = list.toArray();
+	Arrays.sort(numArray);
+	double median;
+	if (numArray.length % 2 == 0)
+    	    median = ((double)numArray[numArray.length/2] + (double)numArray[numArray.length/2 - 1])/2;
+	else
+            median = (double) numArray[numArray.length/2];
+	return median;
+    }
 
     public long getMeanLatency() {
         if(numberOfMessagesReceived == 0) {
@@ -53,7 +67,7 @@ public class TestData {
     }
 
     public void reset() {
-        lastTimeStampMillis = currentTimeMillis;
+        lastTimeStampMillis = System.currentTimeMillis();
         numberOfMessagesReceived = 0;
         totalLatency = 0L;
         list.clear();
@@ -76,20 +90,14 @@ public class TestData {
 
         numberOfMessagesReceived++;
         currentTimeMillis = System.currentTimeMillis();
-        list.add((double) latency);
+        list.add((double) latency/Math.pow(10,6));
         if(currentTimeMillis - lastTimeStampMillis>30000){
             //reset();
         }
     }
 
     public int avgThroughput(){
-        long now = System.currentTimeMillis();
-        if (now - lastTimeStampMillis == 0) {
-            return numberOfMessagesReceived / 1000;
-        } else {
-            return numberOfMessagesReceived / (int) ((now - lastTimeStampMillis) / 1000);
-        }
-
+       return numberOfMessagesReceived / 10;
     }
 
     public double calculateVariance(){
@@ -105,14 +113,13 @@ public class TestData {
 
     public String getData(){
         // throughput, latency(ms)
-        return sizeInBytes + ","+ avgThroughput() + "," + getAvgMillisLatency() + "\n" + getMinMillisLatency() + "," + getMaxMillisLatency();
+        return sizeInBytes + ","+ avgThroughput() + "," + getMedianLatency() + "\n";
     }
 
     public void writeToFile() {
         try {
 	    BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true));
 	    writer.append(getData());
-	    writer.append("\n");
             writer.close();
 	} catch (IOException e) {
            e.printStackTrace();

@@ -26,21 +26,6 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
     protected static final String KEY = "test";
     protected static final String WARM_UP = "warm_up";
 
-    @Value("classpath:payloads/payload_8_bytes.txt")
-    protected Resource PAYLOAD_8_BYTES;
-
-    @Value("classpath:payloads/payload_64_bytes.txt")
-    protected Resource PAYLOAD_64_BYTES;
-
-    @Value("classpath:payloads/payload_512_bytes.txt")
-    protected Resource PAYLOAD_512_BYTES;
-
-    @Value("classpath:payloads/payload_4096_bytes.txt")
-    protected Resource PAYLOAD_4096_BYTES;
-
-    @Value("classpath:payloads/payload_32768_bytes.txt")
-    protected Resource PAYLOAD_32768_BYTES;
-
     // protected String payload;
     protected byte[] payload;
     private static final byte[] endPayload = {'1'};
@@ -61,40 +46,28 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 	    log.info("payload loaded with {}", new String(payload));
     }
 
-    public void loadPayload(Resource r) {
-        try {
-            InputStream in = r.getInputStream();
-            byte[] data = FileCopyUtils.copyToByteArray(in);
-            payload = new byte[data.length];
-            payload = data;
-            log.info("Payload loaded with: {}", new String(payload, StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @EventListener(ApplicationStartedEvent.class)
     private void produce() {
         log.info("PRODUCE --------------");
-        produceWithPayload(PAYLOAD_8_BYTES, 8, 100000);
+        produceWithPayload(8, 10000);
 
-        produceWithPayload(PAYLOAD_64_BYTES, 64, 100000);
+        produceWithPayload(64, 5000);
 
-        produceWithPayload(PAYLOAD_512_BYTES, 512, 25000);
+        produceWithPayload(512, 4000);
 
-        produceWithPayload(PAYLOAD_4096_BYTES, 4096, 10000);
-        produceWithPayload(PAYLOAD_32768_BYTES, 32678, 1000);
+        produceWithPayload(4096, 2000);
+        produceWithPayload(32678, 1000);
 	publish(endTest);
     }
 
     @Override
-    public void produceWithPayload(Resource resource, int payloadSize, int maxThroughPut) {
+    public void produceWithPayload(int payloadSize, int maxThroughPut) {
         
         log.info("Produce with payload size {}", payloadSize);
         //load the neccessary test variables and payload first
-        int minThroughput = (int) (maxThroughPut * 0.15);
+        int minThroughput = (int) (maxThroughPut * 0.10);
         int currentThroughPut = minThroughput; //minThroughput;
-        int incrementThroughPut = (int) (maxThroughPut - minThroughput) / 30;
+        int incrementThroughPut = (int) (maxThroughPut - minThroughput) / 50;
         log.info("Max Through Put {} with payload size {}", maxThroughPut, payloadSize);
         log.info("Min Through Put {} with payload size {}", minThroughput, payloadSize);
 	loadPayload(payloadSize);
@@ -173,7 +146,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 	testWithPayload(currentThroughPut);
         publish(endWarmUp);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             log.error(e.getMessage());
         }
