@@ -18,22 +18,21 @@ import static java.util.stream.IntStream.range;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@Service
-@ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "pulsar")
+// @Service
+// @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "pulsar")
 public class PulsarProducer extends AbstractGenericProducer {
 
-    
-    private final String serviceUrl;
-    private final String topicName;
+    @Value("${pulsar.service-url}")
+    private String serviceUrl;
+
+    @Value("${pulsar.topic}")
+    private String topicName;
 
     private PulsarClient client;
     private Producer<byte[]> producer;
 
-    public PulsarProducer(@Value("${pulsar.service-url}") String url, 
-        @Value("${pulsar.topic}") String t) {
+    public PulsarProducer() {
 
-        this.serviceUrl = url;
-        this.topicName = t;
         try {
             client = PulsarClient.builder()
                     .serviceUrl(serviceUrl)
@@ -53,18 +52,6 @@ public class PulsarProducer extends AbstractGenericProducer {
 	    return;
     }
    
-
-    @Override
-    public void publish(String message) {
-        // Send each message and log message content and ID when successfully received
-        try {
-            CompletableFuture<MessageId> msgId = producer.sendAsync(message.getBytes());
-            log.debug("Published message '"+message+"' with the ID "+msgId);
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-        }
-    }
-
     @Override
     public void publish(byte[] payload) {
         try {

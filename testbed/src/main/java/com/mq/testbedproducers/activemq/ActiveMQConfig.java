@@ -29,7 +29,7 @@ public class ActiveMQConfig {
         activeMQConnectionFactory.setBrokerURL(brokerUrl);
         activeMQConnectionFactory.setUserName(userName);
         activeMQConnectionFactory.setPassword(password);
-	activeMQConnectionFactory.setUseAsyncSend(true);
+	    activeMQConnectionFactory.setUseAsyncSend(true);
         return  activeMQConnectionFactory;
     }
 

@@ -15,8 +15,8 @@ import io.nats.client.Options.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service
-@ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "nats")
+// @Service
+// @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "nats")
 public class NatsProducer extends AbstractGenericProducer {
 
     private final String uri;
@@ -24,7 +24,7 @@ public class NatsProducer extends AbstractGenericProducer {
 
     private static final String topicName = "ledger-1";
 
-    NatsProducer() {
+    public NatsProducer() {
         this.uri = "nats://localhost:4222";
         this.natsConnection = initConnection();
     }
@@ -44,17 +44,6 @@ public class NatsProducer extends AbstractGenericProducer {
     @Override
     public void flush() {
 	    return;
-    }
-
-    @Override
-    public void publish(String message) {
-        try {
-            natsConnection.publish(topicName, message.getBytes());
-            log.info("message published: {}", message);
-        } catch (Exception ioe) {
-            log.error("Error publishing message: {} to {} ", message, topicName, ioe);
-        }
-        
     }
 
     @Override

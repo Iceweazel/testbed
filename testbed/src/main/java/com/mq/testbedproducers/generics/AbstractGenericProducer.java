@@ -17,22 +17,19 @@ import java.time.Instant;
 @Slf4j
 public abstract class AbstractGenericProducer implements ProducerInterface {
 
-    protected static int REPETITIONS = 1000;
-    protected static int RUN_TIME_MS = 10000;
-    protected static int ONE_SECOND_MS = 1000;
-
-    protected static final String START_TEST = "start_test";
-    protected static final String END_TEST = "end_test";
-    protected static final String KEY = "test";
-    protected static final String WARM_UP = "warm_up";
-
-    // protected String payload;
-    protected byte[] payload;
+    private static int RUN_TIME_MS = 10000;
+    private static int ONE_SECOND_MS = 1000;
+    private static final String START_TEST = "start_test";
+    private static final String END_TEST = "end_test";
+    private static final String KEY = "test";
+    private static final String WARM_UP = "warm_up";
     private static final byte[] endPayload = {'1'};
     private static final byte[] startPayload = {'2'};
     private static final byte[] endWarmUp = {'3'};
     private static final byte[] endTest = {'4'};
 	
+    private byte[] payload;
+
     public String addTimeStamp(String message) {
         long now = System.currentTimeMillis();
         return new String(now + "-" + message);
@@ -46,8 +43,8 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 	    log.info("payload loaded with {}", new String(payload));
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    private void produce() {
+    // @EventListener(ApplicationStartedEvent.class)
+    public void produce() {
         log.info("PRODUCE --------------");
         produceWithPayload(8, 50000);
 
@@ -70,7 +67,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         int incrementThroughPut = (int) (maxThroughPut - minThroughput) / 50;
         log.info("Max Through Put {} with payload size {}", maxThroughPut, payloadSize);
         log.info("Min Through Put {} with payload size {}", minThroughput, payloadSize);
-	loadPayload(payloadSize);
+	    loadPayload(payloadSize);
 
         runTestUntilMaxLoad(currentThroughPut, maxThroughPut, incrementThroughPut, payloadSize);
     }
@@ -87,6 +84,7 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 		        flush();
                 try {
                     Thread.sleep(5000);
+                    //wait to print results to csv file
                 } catch (InterruptedException e) {
                     log.error(e.getMessage());
                 }
@@ -101,8 +99,8 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
         long lastTimeStamp = testStart;
 
         long currentTime;
-	long eachRoundTime;
-	long timeTaken;
+	    long eachRoundTime;
+	    long timeTaken;
 
         int messagesSent = 0;
 

@@ -7,30 +7,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.stream.IntStream.range;
 
 @Slf4j
-@Component
-@ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "rabbit")
+// @Component
+// @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "rabbit")
 public class RabbitProducer extends AbstractGenericProducer {
 
-    private final RabbitTemplate rabbitTemplate;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     private static final String ROUTING_KEY = "foo.bar.baz";
 
-    public RabbitProducer(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
+    public RabbitProducer() {
     }
 
     @Override
     public void flush() {
 	    return;
-    }
-
-    @Override
-    public void publish(String message) {
-        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, ROUTING_KEY, message);
     }
 
     @Override

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import static java.util.stream.IntStream.range;
 
 @Slf4j
-@Component
-@ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
+// @Component
+// @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
 public class ActiveMQProducer extends AbstractGenericProducer {
 
     @Autowired
@@ -22,14 +22,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     @Value("${active-mq.topic}")
     private String topic;
 
-    public void publish(String message) {
-        try{
-            log.debug("Attempting Send message to Topic: "+ topic);
-            jmsTemplate.convertAndSend(topic, message);
-        } catch(Exception e){
-            log.error("Recieved Exception during send Message: ", e);
-        }
-    }
+    public ActiveMQProducer() {}
 
     @Override
     public void flush() { return;}
