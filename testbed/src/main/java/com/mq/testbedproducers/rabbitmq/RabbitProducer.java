@@ -3,21 +3,12 @@ package com.mq.testbedproducers.rabbitmq;
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
-
-import java.io.IOException;
-
-import static java.util.stream.IntStream.range;
 
 @Slf4j
 public class RabbitProducer extends AbstractGenericProducer {

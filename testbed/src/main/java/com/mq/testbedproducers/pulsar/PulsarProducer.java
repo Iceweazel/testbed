@@ -22,16 +22,15 @@ import java.util.concurrent.CompletableFuture;
 // @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "pulsar")
 public class PulsarProducer extends AbstractGenericProducer {
 
-    @Value("${pulsar.service-url}")
     private String serviceUrl;
-
-    @Value("${pulsar.topic}")
     private String topicName;
 
     private PulsarClient client;
     private Producer<byte[]> producer;
 
     public PulsarProducer() {
+        serviceUrl = "pulsar://localhost:6650";
+        topicName = "ledger-1";
 
         try {
             client = PulsarClient.builder()
