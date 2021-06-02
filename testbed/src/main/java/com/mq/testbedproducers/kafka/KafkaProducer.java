@@ -8,6 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+
+import com.mq.testbedproducers.generics.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Slf4j
@@ -24,9 +36,6 @@ public class KafkaProducer extends AbstractGenericProducer {
 
     @Value("${kafka.bootstrap}")
     public String bootStrapServers;
-
-    @Value("${kafka.sse-enabled}")
-    public boolean sseEnabled;
     
     @Value("${message.delivery}")
     public String messageDelivery;
