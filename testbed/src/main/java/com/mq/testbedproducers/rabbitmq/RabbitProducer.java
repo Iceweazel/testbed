@@ -41,7 +41,8 @@ public class RabbitProducer extends AbstractGenericProducer {
         binding(queue, exchange);
 
         try {
-            rabbitTemplate = new RabbitTemplate(connectionFactory(connectionFactoryBean()));
+            RabbitConnectionFactoryBean connectionFactoryBean = connectionFactoryBean();
+            rabbitTemplate = new RabbitTemplate(connectionFactory(connectionFactoryBean));
 
         } catch (Exception e) {
             //TODO: handle exception
