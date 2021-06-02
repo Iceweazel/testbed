@@ -42,6 +42,12 @@ public class TestingService {
             default:
                 break;
         }
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+        
         if(producer != null)
             producer.produce();
     }
