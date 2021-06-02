@@ -38,8 +38,9 @@ public class RabbitProducer extends AbstractGenericProducer {
         this.password = "guest";
         Queue queue = queue();
         TopicExchange exchange = exchange();
+        binding(queue, exchange);
+
         try {
-            binding(queue, exchange);
             rabbitTemplate = new RabbitTemplate(connectionFactory(connectionFactoryBean()));
 
         } catch (Exception e) {
@@ -85,7 +86,8 @@ public class RabbitProducer extends AbstractGenericProducer {
      * @throws Exception If wrong parameters are used for connection.
      */
     public ConnectionFactory connectionFactory(RabbitConnectionFactoryBean connectionFactoryBean) throws Exception {
-        return new CachingConnectionFactory(connectionFactoryBean.getObject());
+        ConnectionFactory conn = new CachingConnectionFactory(connectionFactoryBean.getObject());
+        return conn;
     }
 
     Queue queue() {
