@@ -41,8 +41,7 @@ public class RabbitProducer extends AbstractGenericProducer {
         binding(queue, exchange);
 
         try {
-            RabbitConnectionFactoryBean connectionFactoryBean = connectionFactoryBean();
-            rabbitTemplate = new RabbitTemplate(connectionFactory(connectionFactoryBean));
+            rabbitTemplate = new RabbitTemplate(connectionFactory());
 
         } catch (Exception e) {
             //TODO: handle exception
@@ -66,19 +65,19 @@ public class RabbitProducer extends AbstractGenericProducer {
 
     static final String queueName = "spring-boot";
 
-    /**
-     * Establish a connection to a rabbit mq server.
-     * @return Rabbit connection factory for rabbitmq access.
-     * @throws IOException If wrong parameters are used for connection.
-     */
-    public RabbitConnectionFactoryBean connectionFactoryBean() throws IOException {
-        RabbitConnectionFactoryBean connectionFactoryBean = new RabbitConnectionFactoryBean();
-        connectionFactoryBean.setHost(host);
-        connectionFactoryBean.setPort(port);
-        connectionFactoryBean.setUsername(userName);
-        connectionFactoryBean.setPassword(password);
-        return connectionFactoryBean;
-    }
+    // /**
+    //  * Establish a connection to a rabbit mq server.
+    //  * @return Rabbit connection factory for rabbitmq access.
+    //  * @throws IOException If wrong parameters are used for connection.
+    //  */
+    // public RabbitConnectionFactoryBean connectionFactoryBean() throws IOException {
+    //     RabbitConnectionFactoryBean connectionFactoryBean = new RabbitConnectionFactoryBean();
+    //     connectionFactoryBean.setHost(host);
+    //     connectionFactoryBean.setPort(port);
+    //     connectionFactoryBean.setUsername(userName);
+    //     connectionFactoryBean.setPassword(password);
+    //     return connectionFactoryBean;
+    // }
 
     /**
      * Connection factory which established a rabbitmq connection used from a connection factory
@@ -86,8 +85,10 @@ public class RabbitProducer extends AbstractGenericProducer {
      * @return A connection factory to create connections.
      * @throws Exception If wrong parameters are used for connection.
      */
-    public ConnectionFactory connectionFactory(RabbitConnectionFactoryBean connectionFactoryBean) throws Exception {
-        ConnectionFactory conn = new CachingConnectionFactory(connectionFactoryBean.getObject());
+    public ConnectionFactory connectionFactory() throws Exception {
+        CachingConnectionFactory conn = new CachingConnectionFactory(host, port);
+        conn.setUsername(userName);
+        conn.setPassword(password);
         return conn;
     }
 
