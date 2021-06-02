@@ -19,7 +19,6 @@ public class TestingService {
 
     TestingService(@Value("${testing.mq}") String testingMQ) {
         this.testingMQ = testingMQ;
-        startProducer();
     }
 
     @EventListener(ApplicationStartedEvent.class)
