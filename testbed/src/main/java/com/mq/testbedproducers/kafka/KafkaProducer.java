@@ -31,14 +31,11 @@ public class KafkaProducer extends AbstractGenericProducer {
 
     private NewTopic topic;
 
-    @Value("${kafka.topic}")
-    public String topicName;
+    public String topicName = "ledger-1";
 
-    @Value("${kafka.bootstrap}")
-    public String bootStrapServers;
+    public String bootStrapServers = "localhost:9092";
     
-    @Value("${message.delivery}")
-    public String messageDelivery;
+    public String messageDelivery = "at-least-once";
 
     private KafkaProperties kafkaProperties;
 
