@@ -2,6 +2,8 @@ package com.mq.testbedproducers.generics;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 
 import com.mq.testbedproducers.kafka.*;
 import com.mq.testbedproducers.rabbitmq.*;
@@ -20,6 +22,7 @@ public class TestingService {
         startProducer();
     }
 
+    @EventListener(ApplicationStartedEvent.class)
     private void startProducer() {
         switch (testingMQ) {
             case "kafka": 

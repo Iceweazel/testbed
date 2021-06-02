@@ -43,7 +43,6 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 	    log.info("payload loaded with {}", new String(payload));
     }
 
-    // @EventListener(ApplicationStartedEvent.class)
     public void produce() {
         log.info("PRODUCE --------------");
         produceWithPayload(8, 50000);
