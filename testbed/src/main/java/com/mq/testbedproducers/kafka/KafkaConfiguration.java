@@ -22,7 +22,6 @@ import java.util.Map;
 import com.mq.testbedproducers.generics.ConfigUtils;
 
 @Configuration
-@ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "kafka")
 public class KafkaConfiguration {
 
     @Value("${kafka.topic}")
@@ -40,7 +39,6 @@ public class KafkaConfiguration {
     @Autowired
     private KafkaProperties kafkaProperties;
 
-    @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props =
                 new HashMap<>(kafkaProperties.buildProducerProperties());
@@ -58,30 +56,18 @@ public class KafkaConfiguration {
         } else if (messageDelivery.equals(ConfigUtils.AT_LEAST_ONCE)) {
             props.put(ProducerConfig.ACKS_CONFIG, "1");
             props.put(ProducerConfig.LINGER_MS_CONFIG, "2");
-        } 
-
-
-        if(sseEnabled) {
-            props.put("security.protocol", "SSL");
-            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "path");
-            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "password");
-            props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1, TLSv1.1, TLSv1.2, TLSv1.3");
         }
-
         return props;
     }
 
-    @Bean
     public ProducerFactory<String, byte[]> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
-    @Bean
     public KafkaTemplate<String, byte[]> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    @Bean
     public NewTopic ledgerTopic() {
         return new NewTopic(topicName, 1, (short) 1);
     }
