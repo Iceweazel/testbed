@@ -1,23 +1,10 @@
 package com.mq.testbedproducers.rabbitmq;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentNavigableMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.TimeoutException;
-
-import javax.jms.Topic;
-
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConfirmCallback;
-import com.rabbitmq.client.ConfirmListener;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.MessageProperties;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -38,6 +25,7 @@ public class RabbitProducer extends AbstractGenericProducer {
     private Queue queue;
     private TopicExchange exchange;
     private Binding binding;
+    private RabbitAdmin rabbitAdmin;
     private ConnectionFactory connectionFactory;
 
     private static final String ROUTING_KEY = "foo.bar.baz";
@@ -50,6 +38,9 @@ public class RabbitProducer extends AbstractGenericProducer {
         queue = queue();
         exchange = exchange();
         binding = binding(queue, exchange);
+        rabbitAdmin.declareQueue(queue);
+        rabbitAdmin.declareExchange(exchange);
+        rabbitAdmin.declareBinding(binding);
         try {
             connectionFactory = connectionFactory();
             connectionFactory.createConnection();
@@ -93,15 +84,15 @@ public class RabbitProducer extends AbstractGenericProducer {
         return conn;
     }
 
-    Queue queue() {
+    private Queue queue() {
         return new Queue(queueName, true);
     }
 
-    TopicExchange exchange() {
+    private TopicExchange exchange() {
         return new TopicExchange(topicExchangeName);
     }
 
-    Binding binding(Queue queue, TopicExchange exchange) {
+    private Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with("foo.bar.#");
     }
 
