@@ -36,6 +36,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     private MessageProducer producer;
     private Session session;
     private Connection connection;
+    private BytesMessage message;
 
     public ActiveMQProducer() {
         topic = "ledger-1";
@@ -62,6 +63,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
             // MessageProducer is used for sending messages to the queue.
             producer = session.createProducer(destination);
             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+            message = session.createBytesMessage();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -73,7 +75,6 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     @Override
     public void publish(byte[] payload) {
         try{
-            BytesMessage message = session.createBytesMessage();
             message.writeBytes(payload);
             producer.send(message);
             // jmsTemplate.convertAndSend(topic, payload);
