@@ -52,7 +52,7 @@ public class RabbitProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-        rabbitTemplate.convertAndSend(topicExchangeName, ROUTING_KEY, payload);
+        rabbitTemplate.convertAndSend(exchange.getName(), ROUTING_KEY, payload);
     }
 
     @Override
