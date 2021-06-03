@@ -52,7 +52,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
             connection.start();
              
             //Creating a non transactional session to send/receive JMS message.
-            session = connection.createSession(false,
+            session = connection.createSession(true,
                     Session.AUTO_ACKNOWLEDGE);  
              
             //Destination represents here our queue 'JCG_QUEUE' on the JMS server. 
