@@ -35,21 +35,20 @@ public class RabbitProducer extends AbstractGenericProducer {
         this.port = 5672;
         this.userName = "guest";
         this.password = "guest";
+        try {
+            connectionFactory = connectionFactory();
+            connectionFactory.createConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         queue = queue();
         exchange = exchange();
         binding = binding(queue, exchange);
         rabbitAdmin.declareQueue(queue);
         rabbitAdmin.declareExchange(exchange);
         rabbitAdmin.declareBinding(binding);
-        try {
-            connectionFactory = connectionFactory();
-            connectionFactory.createConnection();
-            rabbitTemplate = new RabbitTemplate(connectionFactory);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        
+        rabbitTemplate = new RabbitTemplate(connectionFactory);
     }
 
     @Override
