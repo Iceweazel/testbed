@@ -35,7 +35,7 @@ public class KafkaProducer extends AbstractGenericProducer {
 
     public String bootStrapServers = "localhost:9092";
     
-    public String messageDelivery = "at-least-once";
+    public String messageDelivery = "only-once";
 
     private KafkaProperties kafkaProperties;
 
