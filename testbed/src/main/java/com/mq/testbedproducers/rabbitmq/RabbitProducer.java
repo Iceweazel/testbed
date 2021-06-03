@@ -44,6 +44,7 @@ public class RabbitProducer extends AbstractGenericProducer {
         queue = queue();
         exchange = exchange();
         binding = binding(queue, exchange);
+        rabbitAdmin = new RabbitAdmin(connectionFactory);
         rabbitAdmin.declareQueue(queue);
         rabbitAdmin.declareExchange(exchange);
         rabbitAdmin.declareBinding(binding);
