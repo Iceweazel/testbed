@@ -1,5 +1,7 @@
 package com.mq.testbedproducers.rabbitmq;
 
+import javax.jms.Topic;
+
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,6 +21,9 @@ public class RabbitProducer extends AbstractGenericProducer {
     private int port;
     private String userName;
     private String password;
+    private Queue queue;
+    private TopicExchange exchange;
+    private Binding binding;
 
     private static final String ROUTING_KEY = "foo.bar.baz";
 
@@ -27,13 +32,12 @@ public class RabbitProducer extends AbstractGenericProducer {
         this.port = 5672;
         this.userName = "guest";
         this.password = "guest";
-        Queue queue = queue();
-        TopicExchange exchange = exchange();
-        binding(queue, exchange);
+        queue = queue();
+        exchange = exchange();
+        binding = binding(queue, exchange);
 
         try {
             rabbitTemplate = new RabbitTemplate(connectionFactory());
-
         } catch (Exception e) {
             e.printStackTrace();
         }

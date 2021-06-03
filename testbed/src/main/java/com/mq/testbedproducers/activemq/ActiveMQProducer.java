@@ -56,8 +56,6 @@ public class ActiveMQProducer extends AbstractGenericProducer {
             session = connection.createSession(true,
                     Session.AUTO_ACKNOWLEDGE);  
              
-            //Destination represents here our queue 'JCG_QUEUE' on the JMS server. 
-            //The queue will be created automatically on the server.
             Destination destination = session.createTopic(topic); 
              
             // MessageProducer is used for sending messages to the queue.
