@@ -62,7 +62,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
             // MessageProducer is used for sending messages to the queue.
             producer = session.createProducer(destination);
             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-        } catch (JmsException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
