@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQBytesMessage;
-import org.springframework.jms.core.JmsTemplate;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -27,11 +26,7 @@ import javax.jms.TextMessage;
 import static java.util.stream.IntStream.range;
 
 @Slf4j
-// @Component
-// @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
 public class ActiveMQProducer extends AbstractGenericProducer {
-
-    // private JmsTemplate jmsTemplate;
 
     private String topic;
     private String brokerUrl;
@@ -70,8 +65,6 @@ public class ActiveMQProducer extends AbstractGenericProducer {
         } catch (JmsException e) {
             log.error(e.getMessage());
         }
-
-        
     }
 
     @Override
