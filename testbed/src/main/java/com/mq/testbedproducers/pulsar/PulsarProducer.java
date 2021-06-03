@@ -61,4 +61,13 @@ public class PulsarProducer extends AbstractGenericProducer {
         }
     }
 
+    @Override
+    public void close() {
+        try {
+            producer.close();
+            client.close();
+        } catch (PulsarClientException e) {
+            e.printStackTrace();
+        }
+    }
 }

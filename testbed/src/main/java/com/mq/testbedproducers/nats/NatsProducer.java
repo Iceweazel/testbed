@@ -55,5 +55,14 @@ public class NatsProducer extends AbstractGenericProducer {
             log.error("Error publishing message: {} to {} ", payload.toString(), topicName, ioe);
         }   
     }
+
+    @Override
+    public void close() {
+        try {
+            natsConnection.close();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     
 }

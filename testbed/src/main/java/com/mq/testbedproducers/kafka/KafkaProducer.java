@@ -87,4 +87,9 @@ public class KafkaProducer extends AbstractGenericProducer {
     public void publish(byte[] message) {
         producer.send(topic.name(), "ledger",message);
     }
+
+    @Override
+    public void close() {
+        return;
+    }
 }

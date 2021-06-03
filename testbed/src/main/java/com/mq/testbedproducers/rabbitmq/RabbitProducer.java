@@ -35,7 +35,6 @@ public class RabbitProducer extends AbstractGenericProducer {
             rabbitTemplate = new RabbitTemplate(connectionFactory());
 
         } catch (Exception e) {
-            //TODO: handle exception
             e.printStackTrace();
         }
 
@@ -52,23 +51,14 @@ public class RabbitProducer extends AbstractGenericProducer {
         rabbitTemplate.convertAndSend(topicExchangeName, ROUTING_KEY, payload);
     }
 
+    @Override
+    public void close() {
+        return;
+    }
+
     static final String topicExchangeName = "spring-boot-exchange";
 
     static final String queueName = "spring-boot";
-
-    // /**
-    //  * Establish a connection to a rabbit mq server.
-    //  * @return Rabbit connection factory for rabbitmq access.
-    //  * @throws IOException If wrong parameters are used for connection.
-    //  */
-    // public RabbitConnectionFactoryBean connectionFactoryBean() throws IOException {
-    //     RabbitConnectionFactoryBean connectionFactoryBean = new RabbitConnectionFactoryBean();
-    //     connectionFactoryBean.setHost(host);
-    //     connectionFactoryBean.setPort(port);
-    //     connectionFactoryBean.setUsername(userName);
-    //     connectionFactoryBean.setPassword(password);
-    //     return connectionFactoryBean;
-    // }
 
     /**
      * Connection factory which established a rabbitmq connection used from a connection factory

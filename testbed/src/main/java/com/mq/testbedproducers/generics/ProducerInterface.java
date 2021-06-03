@@ -8,4 +8,5 @@ public interface ProducerInterface {
     void publish(byte[] payload);
     void warmUp(int currentThroughput);
     void produceWithPayload(int payloadSize, int maxThroughPut);
+    void close();
 }

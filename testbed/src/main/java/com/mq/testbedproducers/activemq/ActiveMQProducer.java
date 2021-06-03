@@ -6,13 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQBytesMessage;
 import org.springframework.jms.core.JmsTemplate;
 
+import javax.jms.BytesMessage;
+import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import static java.util.stream.IntStream.range;
 
@@ -21,19 +31,47 @@ import static java.util.stream.IntStream.range;
 // @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
 public class ActiveMQProducer extends AbstractGenericProducer {
 
-    private JmsTemplate jmsTemplate;
+    // private JmsTemplate jmsTemplate;
 
     private String topic;
     private String brokerUrl;
     private String userName;
     private String password;
 
+    private MessageProducer producer;
+    private Session session;
+    private Connection connection;
+
     public ActiveMQProducer() {
         topic = "ledger-1";
         brokerUrl = "tcp://localhost:61616";
         userName = "admin";
         password = "admin";
-        this.jmsTemplate = jmsTemplate();
+        startSession();
+    }
+
+    private void startSession() {
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+        try {
+            connection = connectionFactory.createConnection();
+            connection.start();
+             
+            //Creating a non transactional session to send/receive JMS message.
+            session = connection.createSession(false,
+                    Session.AUTO_ACKNOWLEDGE);  
+             
+            //Destination represents here our queue 'JCG_QUEUE' on the JMS server. 
+            //The queue will be created automatically on the server.
+            Destination destination = session.createTopic(topic); 
+             
+            // MessageProducer is used for sending messages to the queue.
+            producer = session.createProducer(destination);
+            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+        } catch (JmsException e) {
+            log.error(e.getMessage());
+        }
+
+        
     }
 
     @Override
@@ -42,10 +80,21 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     @Override
     public void publish(byte[] payload) {
         try{
-            log.debug("Attempting Send message to Topic: "+ topic);
-            jmsTemplate.convertAndSend(topic, payload);
-        } catch(Exception e){
+            BytesMessage message = session.createBytesMessage();
+            message.writeBytes(payload);
+            producer.send(message);
+            // jmsTemplate.convertAndSend(topic, payload);
+        } catch(JMSException e){
             log.error("Recieved Exception during send Message: ", e);
+        }
+    }
+    
+    @Override
+    public void close() {
+        try {
+            connection.close();
+        } catch (JMSException e) {
+            e.printStackTrace();
         }
     }
 
