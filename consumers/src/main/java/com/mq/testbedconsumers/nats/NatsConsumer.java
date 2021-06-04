@@ -17,6 +17,7 @@ import io.nats.streaming.Message;
 import io.nats.client.Nats;
 import io.nats.streaming.StreamingConnection;
 import io.nats.streaming.StreamingConnectionFactory;
+import io.nats.streaming.SubscriptionOptions;
 import  io.nats.streaming.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +59,9 @@ public class NatsConsumer extends AbstractConsumer {
         try {
             streamingConnection = cf.createConnection();
 
-            streamingConnection.subscribe("ledger-1", messageHandler);
+            SubscriptionOptions options = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
+
+            streamingConnection.subscribe("ledger-1", messageHandler, options);
         } catch (Exception e) {
             e.printStackTrace();
         }
