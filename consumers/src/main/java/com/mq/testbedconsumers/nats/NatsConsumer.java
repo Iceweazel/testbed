@@ -1,8 +1,12 @@
 package com.mq.testbedconsumers.nats;
 
+import javax.annotation.PostConstruct;
+
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 
@@ -14,7 +18,6 @@ import io.nats.streaming.StreamingConnection;
 import io.nats.streaming.StreamingConnectionFactory;
 import io.nats.streaming.SubscriptionOptions;
 import io.nats.streaming.MessageHandler;
-import io.nats.streaming.NatsStreaming;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,9 +31,10 @@ public class NatsConsumer extends AbstractConsumer {
 
     NatsConsumer() {
         this.uri = "nats://localhost:4222";
-        this.subscribe();
+        // this.subscribe();
     }
 
+    @EventListener(ApplicationStartedEvent.class)
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).build();
 
@@ -38,9 +42,8 @@ public class NatsConsumer extends AbstractConsumer {
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
-            // StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
-
-            streamingConnection = NatsStreaming.connect("ledger-cluster", "consumer", options);
+            StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
+            streamingConnection = cf.createConnection();
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
 
