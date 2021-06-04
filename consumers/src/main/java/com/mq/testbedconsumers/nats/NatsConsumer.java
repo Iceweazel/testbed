@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 
 import io.nats.client.Connection;
 import io.nats.client.Dispatcher;
-import io.nats.client.Message;
+import io.nats.streaming.Message;
 import io.nats.client.Nats;
+import io.nats.streaming.StreamingConnection;
+import io.nats.streaming.StreamingConnectionFactory;
+import  io.nats.streaming.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,32 +27,46 @@ public class NatsConsumer extends AbstractConsumer {
     
 
     private final String uri;
-    private Connection natsConnection;
-    private Dispatcher disPatcher;
+    // private Connection natsConnection;
+    // private Dispatcher disPatcher;
+    private StreamingConnection streamingConnection;
 
     NatsConsumer() {
         this.uri = "nats://localhost:4222";
-        this.natsConnection = initConnection();
+        // this.natsConnection = initConnection();
         this.subscribe();
     }
 
-    private Connection initConnection() {
+    // private Connection initConnection() {
 
-        try {
-            return Nats.connect(uri);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    //     try {
+    //         return Nats.connect(uri);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     } catch (InterruptedException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return null;
+    // }
 
     private void subscribe() {
 
-        disPatcher = natsConnection.createDispatcher(msg -> {});
+        StreamingConnectionFactory cf = new StreamingConnectionFactory("ledger-cluster", "consumer");
 
-        disPatcher.subscribe(topicName, msg -> handleContent(msg));
+        MessageHandler messageHandler = m -> this.handleContent(m);
+        
+        try {
+            streamingConnection = cf.createConnection();
+
+            streamingConnection.subscribe("ledger-1", messageHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // disPatcher = natsConnection.createDispatcher(msg -> {});
+
+        // disPatcher.subscribe(topicName, msg -> handleContent(msg));
     }
 
     private void handleContent(Message msg) {
