@@ -52,7 +52,7 @@ public class NatsConsumer extends AbstractConsumer {
 
     private void subscribe() {
 
-        StreamingConnectionFactory cf = new StreamingConnectionFactory("ledger-cluster", "consumer");
+        StreamingConnectionFactory cf = new StreamingConnectionFactory("nats", "consumer");
 
         MessageHandler messageHandler = m -> this.handleContent(m);
         
