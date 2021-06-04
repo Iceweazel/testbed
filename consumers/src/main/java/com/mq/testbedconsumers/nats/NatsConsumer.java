@@ -33,12 +33,12 @@ public class NatsConsumer extends AbstractConsumer {
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).build();
 
-        log.info(options.toString());
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
             StreamingConnectionFactory cf = new StreamingConnectionFactory();
             cf.setOptions(options);
+            log.info(cf.toString());
             streamingConnection = cf.createConnection();
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
