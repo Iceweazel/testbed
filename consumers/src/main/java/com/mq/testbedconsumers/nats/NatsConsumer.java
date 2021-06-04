@@ -16,6 +16,7 @@ import io.nats.streaming.StreamingConnection;
 import io.nats.streaming.StreamingConnectionFactory;
 import io.nats.streaming.SubscriptionOptions;
 import io.nats.streaming.MessageHandler;
+import io.nats.streaming.NatsStreaming;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,10 +40,11 @@ public class NatsConsumer extends AbstractConsumer {
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
-            StreamingConnectionFactory cf = new StreamingConnectionFactory();
-            cf.setOptions(options);
-            doneSignal = new CountDownLatch(1);
-            streamingConnection = cf.createConnection();
+            // StreamingConnectionFactory cf = new StreamingConnectionFactory();
+            // cf.setOptions(options);
+            // doneSignal = new CountDownLatch(1);
+            // streamingConnection = cf.createConnection();
+            streamingConnection = NatsStreaming.connect(null, null, options);
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().build();
 
@@ -51,11 +53,11 @@ public class NatsConsumer extends AbstractConsumer {
             e.printStackTrace();
         }
 
-        try {
-            doneSignal.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     doneSignal.await();
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
 
     }
 
@@ -64,7 +66,7 @@ public class NatsConsumer extends AbstractConsumer {
            handleContent(msg.getData());
         }
 
-        if(testDone)
-            doneSignal.countDown();
+        // if(testDone)
+        //     doneSignal.countDown();
     }
 }
