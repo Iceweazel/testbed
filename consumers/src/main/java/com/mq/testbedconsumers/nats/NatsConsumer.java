@@ -31,7 +31,7 @@ public class NatsConsumer extends AbstractConsumer {
     }
 
     private void subscribe() {
-        Options options = new Options.Builder().natsUrl(uri).build();
+        Options options = new Options.Builder().natsUrl(uri).clientId("consumer").clusterId("ledger-cluster").build();
 
         MessageHandler messageHandler = m -> this.handleContent(m);
         
