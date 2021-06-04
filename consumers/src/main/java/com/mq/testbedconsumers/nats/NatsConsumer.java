@@ -14,12 +14,13 @@ import org.springframework.stereotype.Service;
 
 import io.nats.streaming.Message;
 
+import io.nats.streaming.Options;
+import io.nats.streaming.Options.Builder;
 import io.nats.streaming.StreamingConnection;
 import io.nats.streaming.StreamingConnectionFactory;
 import io.nats.streaming.SubscriptionOptions;
-import  io.nats.streaming.MessageHandler;
-import io.nats.streaming.Options;
-import io.nats.streaming.Options.Builder;
+import io.nats.streaming.MessageHandler;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,30 +31,15 @@ public class NatsConsumer extends AbstractConsumer {
     
 
     private final String uri;
-    // private Connection natsConnection;
-    // private Dispatcher disPatcher;
     private StreamingConnection streamingConnection;
 
     NatsConsumer() {
         this.uri = "nats://localhost:4222";
-        // this.natsConnection = initConnection();
         this.subscribe();
     }
 
-    // private Connection initConnection() {
-
-    //     try {
-    //         return Nats.connect(uri);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     } catch (InterruptedException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return null;
-    // }
-
     private void subscribe() {
-        Options options = Options.Builder().natsUrl(uri).build();
+        Options options = new Options.Builder().natsUrl(uri).build();
 
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
 
@@ -69,10 +55,6 @@ public class NatsConsumer extends AbstractConsumer {
             e.printStackTrace();
         }
 
-
-        // disPatcher = natsConnection.createDispatcher(msg -> {});
-
-        // disPatcher.subscribe(topicName, msg -> handleContent(msg));
     }
 
     private void handleContent(Message msg) {
