@@ -62,9 +62,9 @@ public class NatsConsumer extends AbstractConsumer {
         try {
             streamingConnection = cf.createConnection();
 
-            SubscriptionOptions options = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
+            SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
 
-            streamingConnection.subscribe("ledger-1", messageHandler, options);
+            streamingConnection.subscribe("ledger-1", messageHandler, subOpts);
         } catch (Exception e) {
             e.printStackTrace();
         }
