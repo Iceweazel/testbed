@@ -11,14 +11,16 @@ import com.mq.testbedconsumers.generics.AbstractConsumer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import io.nats.client.Connection;
-import io.nats.client.Dispatcher;
+
 import io.nats.streaming.Message;
-import io.nats.client.Nats;
+
 import io.nats.streaming.StreamingConnection;
 import io.nats.streaming.StreamingConnectionFactory;
 import io.nats.streaming.SubscriptionOptions;
 import  io.nats.streaming.MessageHandler;
+import io.nats.streaming.Options;
+import io.nats.streaming.Options.Builder;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -51,8 +53,9 @@ public class NatsConsumer extends AbstractConsumer {
     // }
 
     private void subscribe() {
+        Options options = Options.Builder().natsUrl(uri).build();
 
-        StreamingConnectionFactory cf = new StreamingConnectionFactory("nats", "consumer");
+        StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
 
         MessageHandler messageHandler = m -> this.handleContent(m);
         
