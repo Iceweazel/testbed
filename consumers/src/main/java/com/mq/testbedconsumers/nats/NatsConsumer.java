@@ -37,7 +37,7 @@ public class NatsConsumer extends AbstractConsumer {
         Options options = new Options.Builder().natsUrl(uri).clientId("consumer").clusterId("nats-streaming").build();
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
         SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().build();
-        MessageHandler messageHandler = m -> this.handleContent(m);
+        MessageHandler messageHandler = m -> {this.handleContent(m);};
         
         try {
             streamingConnection = cf.createConnection();
@@ -50,6 +50,8 @@ public class NatsConsumer extends AbstractConsumer {
     }
 
     private void handleContent(Message msg) {
+        log.info("Hllo");
+
         if(msg != null && msg.getData() != null) {
            handleContent(msg.getData());
         }
