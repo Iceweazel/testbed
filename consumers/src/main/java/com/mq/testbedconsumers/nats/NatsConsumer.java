@@ -1,11 +1,5 @@
 package com.mq.testbedconsumers.nats;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Iterator;
-
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,11 +35,12 @@ public class NatsConsumer extends AbstractConsumer {
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).build();
 
-        StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
 
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
+            StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
+
             streamingConnection = cf.createConnection();
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
