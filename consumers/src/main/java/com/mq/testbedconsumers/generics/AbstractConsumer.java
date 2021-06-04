@@ -16,8 +16,6 @@ public abstract class AbstractConsumer {
 
     private static TestData testData = new TestData();
     
-    public static boolean testDone = false;
-
     protected void endTest() {
         testStarted = false;
         log.info("DONE MEASURING DATA \n -------------");
@@ -48,8 +46,6 @@ public abstract class AbstractConsumer {
                 testData.reset();
             } else {
 		        log.info("END TEST---------------------");
-                testDone = true;
-
 		    }
 	        return;
         }
