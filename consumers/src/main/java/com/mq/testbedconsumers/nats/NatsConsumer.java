@@ -27,7 +27,6 @@ public class NatsConsumer extends AbstractConsumer {
 
     private final String uri;
     private StreamingConnection streamingConnection;
-    private CountDownLatch doneSignal;
 
     NatsConsumer() {
         this.uri = "nats://localhost:4222";
@@ -36,28 +35,17 @@ public class NatsConsumer extends AbstractConsumer {
 
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).clientId("consumer").clusterId("nats").build();
-
+        StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
+        SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().build();
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
-            // StreamingConnectionFactory cf = new StreamingConnectionFactory();
-            // cf.setOptions(options);
-            // doneSignal = new CountDownLatch(1);
-            // streamingConnection = cf.createConnection();
-            streamingConnection = NatsStreaming.connect(null, null, options);
-
-            SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().build();
+            streamingConnection = cf.createConnection();
 
             streamingConnection.subscribe("ledger-1", messageHandler, subOpts);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // try {
-        //     doneSignal.await();
-        // } catch (InterruptedException e) {
-        //     e.printStackTrace();
-        // }
 
     }
 

@@ -14,10 +14,6 @@ public abstract class AbstractConsumer {
 
     protected static boolean testStarted = false;
 
-    private int lastPayloadLength;
-
-    public static boolean testDone = false;
-
     private static TestData testData = new TestData();
 
     protected void endTest() {
@@ -50,13 +46,11 @@ public abstract class AbstractConsumer {
                 testData.reset();
             } else {
 		        log.info("END TEST---------------------");
-                if (lastPayloadLength == 1000000)
-                    testDone = true;
+
 		    }
 	        return;
         }
 	
-    lastPayloadLength = message.length;
 
 	if (testStarted)
             testData.addMessage(message);
