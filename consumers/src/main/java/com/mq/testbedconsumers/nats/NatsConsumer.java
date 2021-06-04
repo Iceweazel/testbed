@@ -36,7 +36,7 @@ public class NatsConsumer extends AbstractConsumer {
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).clientId("consumer").clusterId("nats-streaming").build();
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
-        SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().build();
+        SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
         MessageHandler messageHandler = m -> {
             handleContent(m);
         };
