@@ -14,8 +14,7 @@ import io.nats.streaming.StreamingConnection;
 import io.nats.streaming.StreamingConnectionFactory;
 import io.nats.streaming.SubscriptionOptions;
 import io.nats.streaming.MessageHandler;
-
-
+import io.nats.streaming.NatsStreaming;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,9 +38,9 @@ public class NatsConsumer extends AbstractConsumer {
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
-            StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
+            // StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
 
-            streamingConnection = cf.createConnection();
+            streamingConnection = NatsStreaming.connect("ledger-cluster", "consumer", options);
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
 
