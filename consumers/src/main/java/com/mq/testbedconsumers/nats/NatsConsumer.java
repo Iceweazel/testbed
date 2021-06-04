@@ -57,7 +57,5 @@ public class NatsConsumer extends AbstractConsumer {
            handleContent(msg.getData());
         }
 
-        // if(testDone)
-        //     doneSignal.countDown();
     }
 }

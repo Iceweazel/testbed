@@ -40,19 +40,18 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 	    for(int i = 0; i < payloadSize; i++) {
 		    payload[i] = 'a';
 	    }
-	    log.info("payload loaded with {}", new String(payload));
     }
 
     public void produce() {
         log.info("PRODUCE --------------");
-        //produceWithPayload(8, 100000);
+        produceWithPayload(8, 80000);
 
-        //produceWithPayload(64, 50000);
+        produceWithPayload(64, 50000);
 
-        //produceWithPayload(512, 5000);
+        produceWithPayload(512, 5000);
 
-        //produceWithPayload(4096, 2000);
-        //produceWithPayload(32678, 1000);
+        produceWithPayload(4096, 2000);
+        produceWithPayload(32678, 1000);
 	produceWithPayload(1000000,500);
 	publish(endTest);
     }
