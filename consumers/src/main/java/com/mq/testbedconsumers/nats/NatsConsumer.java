@@ -1,5 +1,7 @@
 package com.mq.testbedconsumers.nats;
 
+import java.util.concurrent.CountDownLatch;
+
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,6 +26,7 @@ public class NatsConsumer extends AbstractConsumer {
 
     private final String uri;
     private StreamingConnection streamingConnection;
+    private CountDownLatch doneSignal;
 
     NatsConsumer() {
         this.uri = "nats://localhost:4222";
@@ -38,6 +41,7 @@ public class NatsConsumer extends AbstractConsumer {
         try {
             StreamingConnectionFactory cf = new StreamingConnectionFactory();
             cf.setOptions(options);
+            doneSignal = new CountDownLatch(1);
             streamingConnection = cf.createConnection();
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().build();
@@ -47,11 +51,20 @@ public class NatsConsumer extends AbstractConsumer {
             e.printStackTrace();
         }
 
+        try {
+            doneSignal.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void handleContent(Message msg) {
         if(msg != null && msg.getData() != null) {
            handleContent(msg.getData());
         }
+
+        if(testDone)
+            doneSignal.countDown();
     }
 }
