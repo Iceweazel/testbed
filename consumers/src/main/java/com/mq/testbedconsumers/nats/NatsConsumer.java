@@ -1,12 +1,8 @@
 package com.mq.testbedconsumers.nats;
 
-import javax.annotation.PostConstruct;
-
 import com.mq.testbedconsumers.generics.AbstractConsumer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 
@@ -31,18 +27,18 @@ public class NatsConsumer extends AbstractConsumer {
 
     NatsConsumer() {
         this.uri = "nats://localhost:4222";
-        // this.subscribe();
+        this.subscribe();
     }
 
-    @EventListener(ApplicationStartedEvent.class)
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).build();
 
-
+        log.info(options);
         MessageHandler messageHandler = m -> this.handleContent(m);
         
         try {
-            StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
+            StreamingConnectionFactory cf = new StreamingConnectionFactory();
+            cf.setOptions(options);
             streamingConnection = cf.createConnection();
 
             SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
