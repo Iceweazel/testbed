@@ -46,18 +46,6 @@ public class NatsProducer extends AbstractGenericProducer {
         }
     }
 
-    private Connection initConnection() {
-
-        try {
-            return Nats.connect(uri);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     @Override
     public void flush() {
 	    return;
