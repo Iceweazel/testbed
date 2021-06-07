@@ -22,8 +22,8 @@ public class TestRunner {
 
     public TestRunner(String messageQueue) {
         if(messageQueue.equals("rabbit")) {
-            consumer = new RabbitConsumer();
             producer = new RabbitProducer();
+            consumer = new RabbitConsumer();
         }
         System.out.println("Runner - Consumer and producer started");
     }
