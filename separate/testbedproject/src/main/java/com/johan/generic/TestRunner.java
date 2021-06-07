@@ -8,8 +8,8 @@ import com.johan.producers.RabbitProducer;
 
 public class TestRunner {
     
-    private static final byte[] START_PAYLOAD = {'1'};
-    private static final byte[] END_PAYLOAD = {'2'};
+    private static final byte[] START_PAYLOAD = {'2'};
+    private static final byte[] END_PAYLOAD = {'1'};
     private static final byte[] WARM_UP_DONE = {'3'};
     private static final byte[] END_TESTS = {'4'};
     private static final int RUN_TIME_MS = 10000;
@@ -25,6 +25,7 @@ public class TestRunner {
             consumer = new RabbitConsumer();
             producer = new RabbitProducer();
         }
+        System.out.println("Runner - Consumer and producer started");
     }
 
     protected void initPayloadWithSize(int size) {
@@ -33,6 +34,7 @@ public class TestRunner {
     }
 
     public void startTests() {
+        System.out.println("Runner - start tests");
         consumer.startListener();
         threadWait(1000);
         produceWithPayloadSize(8, 100000);
@@ -58,6 +60,7 @@ public class TestRunner {
     }
 
     private void runTestUntilMaxLoad(int currentThroughPut, int maxThroughput, int incrementThroughPut) {
+        System.out.printf("Runner - run with TP :%d \n", currentThroughPut);
         while(currentThroughPut < maxThroughput) {
             warmUp(currentThroughPut);
             producer.publish(START_PAYLOAD);
