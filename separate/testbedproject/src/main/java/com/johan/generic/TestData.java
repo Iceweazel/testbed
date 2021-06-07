@@ -121,12 +121,13 @@ public class TestData {
 
     public void writeToFile() {
         try {
-	    BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true));
-	    writer.append(getData());
+	        BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true));
+            System.out.println(getData());
+	        writer.append(getData());
             writer.close();
-	} catch (IOException e) {
-           e.printStackTrace();
-	}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
