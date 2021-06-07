@@ -8,10 +8,10 @@ import com.johan.producers.RabbitProducer;
 
 public class TestRunner {
     
-    private static final byte[] START_PAYLOAD = {1};
-    private static final byte[] END_PAYLOAD = {2};
-    private static final byte[] WARM_UP_DONE = {3};
-    private static final byte[] END_TESTS = {4};
+    private static final byte[] START_PAYLOAD = {'1'};
+    private static final byte[] END_PAYLOAD = {'2'};
+    private static final byte[] WARM_UP_DONE = {'3'};
+    private static final byte[] END_TESTS = {'4'};
     private static final int RUN_TIME_MS = 10000;
     private static final int ONE_SECOND_MS = 1000;
 
