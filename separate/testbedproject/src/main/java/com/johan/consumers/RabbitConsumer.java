@@ -23,6 +23,13 @@ public class RabbitConsumer implements Consumer {
     private Connection connection;
     private Channel channel;
     private TestData testData;
+    private Thread thread = new Thread(() -> {
+        try {
+            channel.basicConsume(QUEUE, atMostOnceCallback(), consumerTag -> {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    });
     
     public RabbitConsumer() {
         //Using default values to connect
@@ -49,11 +56,7 @@ public class RabbitConsumer implements Consumer {
 
     @Override
     public void startListener() {
-        try {
-            channel.basicConsume(QUEUE, atMostOnceCallback(), consumerTag -> {});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        thread.start();
     }
 
     @Override
