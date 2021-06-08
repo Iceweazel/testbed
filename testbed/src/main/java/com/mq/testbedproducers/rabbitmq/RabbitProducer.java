@@ -99,7 +99,7 @@ public class RabbitProducer extends AbstractGenericProducer {
      * @throws Exception If wrong parameters are used for connection.
      */
     public ConnectionFactory connectionFactory() throws Exception {
-        CachingConnectionFactory conn = new CachingConnectionFactory();
+        CachingConnectionFactory conn = new CachingConnectionFactory("localhost", 5672);
         CachingConnectionFactory publisherFactory = (CachingConnectionFactory) conn.getPublisherConnectionFactory();
         publisherFactory.setChannelCacheSize(1);
         publisherFactory.setPublisherConfirmType(ConfirmType.CORRELATED);
