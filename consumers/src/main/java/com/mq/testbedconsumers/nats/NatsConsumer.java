@@ -38,7 +38,12 @@ public class NatsConsumer extends AbstractConsumer {
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
         SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
         MessageHandler messageHandler = m -> {
-            handleContent(m);
+            this.handleContent(m);
+            try {
+                m.ack();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         };
 
         try {
