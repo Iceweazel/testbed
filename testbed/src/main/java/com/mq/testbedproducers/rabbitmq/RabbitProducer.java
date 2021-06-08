@@ -1,27 +1,27 @@
 package com.mq.testbedproducers.rabbitmq;
 
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
+import com.rabbitmq.client.ConfirmCallback;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory.ConfirmType;
 
 @Slf4j
 public class RabbitProducer extends AbstractGenericProducer {
 
     private RabbitTemplate rabbitTemplate;
 
-    private String host;
-    private int port;
-    private String userName;
-    private String password;
     private Queue queue;
     private TopicExchange exchange;
     private Binding binding;
@@ -31,10 +31,6 @@ public class RabbitProducer extends AbstractGenericProducer {
     private static final String ROUTING_KEY = "foo.bar.baz";
 
     public RabbitProducer() {
-        this.host = "localhost";
-        this.port = 5672;
-        this.userName = "guest";
-        this.password = "guest";
         try {
             connectionFactory = connectionFactory();
             connectionFactory.createConnection();
@@ -49,7 +45,20 @@ public class RabbitProducer extends AbstractGenericProducer {
         rabbitAdmin.declareExchange(exchange);
         rabbitAdmin.declareBinding(binding);
 
-        rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate = rabbitAdmin.getRabbitTemplate();
+        rabbitTemplate.setMandatory(true);
+        rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback(){
+
+            @Override
+            public void confirm(CorrelationData correlationData, boolean ack, String cause) {
+                if(ack) {
+                    
+                } else {
+
+                }             
+            }
+            
+        });
     }
 
     @Override
@@ -59,7 +68,8 @@ public class RabbitProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-        rabbitTemplate.convertAndSend(exchange.getName(), ROUTING_KEY, payload);
+        CorrelationData cd = new CorrelationData();
+        rabbitTemplate.convertAndSend(exchange.getName(), ROUTING_KEY, payload, cd);
     }
 
     @Override
@@ -78,10 +88,11 @@ public class RabbitProducer extends AbstractGenericProducer {
      * @throws Exception If wrong parameters are used for connection.
      */
     public ConnectionFactory connectionFactory() throws Exception {
-        CachingConnectionFactory conn = new CachingConnectionFactory(host, port);
-        conn.setUsername(userName);
-        conn.setPassword(password);
-        return conn;
+        CachingConnectionFactory conn = new CachingConnectionFactory();
+        CachingConnectionFactory publisherFactory = (CachingConnectionFactory) conn.getPublisherConnectionFactory();
+        publisherFactory.setChannelCacheSize(1);
+        publisherFactory.setPublisherConfirmType(ConfirmType.CORRELATED);
+        return publisherFactory;
     }
 
     private Queue queue() {

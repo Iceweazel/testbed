@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "nats")
 public class NatsConsumer extends AbstractConsumer {
     
-
     private final String uri;
     private StreamingConnection streamingConnection;
 
@@ -37,7 +36,19 @@ public class NatsConsumer extends AbstractConsumer {
     private void subscribe() {
         Options options = new Options.Builder().natsUrl(uri).clientId("consumer").clusterId("nats-streaming").build();
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
-        SubscriptionOptions subOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
+        SubscriptionOptions atLeastOnceOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
+        MessageHandler messageHandler = getAtMostOnceMessageHandler();
+
+        try {
+            streamingConnection = cf.createConnection();
+            streamingConnection.subscribe("ledger-1", messageHandler);
+            // streamingConnection.subscribe("ledger-1", messageHandler, atLeastOnceOpts);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private MessageHandler getAtLeastOnceMessageHandler() {
         MessageHandler messageHandler = m -> {
             this.handleContent(m);
             try {
@@ -46,14 +57,14 @@ public class NatsConsumer extends AbstractConsumer {
                 e.printStackTrace();
             }
         };
+        return messageHandler;
+    }
 
-        try {
-            streamingConnection = cf.createConnection();
-            streamingConnection.subscribe("ledger-1", messageHandler, subOpts);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    private MessageHandler getAtMostOnceMessageHandler() {
+        MessageHandler messageHandler = m -> {
+            this.handleContent(m);
+        };
+        return messageHandler;
     }
 
     private void handleContent(Message msg) {

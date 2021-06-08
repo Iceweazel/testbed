@@ -35,7 +35,7 @@ public class NatsProducer extends AbstractGenericProducer {
         Options options = new Options.Builder().natsUrl(uri).clientId("producer").clusterId("nats-streaming").build();
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
         ackDoneSignal = new CountDownLatch(1);
-        ackHandler = getAtLeastOnceAckHandler();
+        ackHandler = getAtMostOnceAckHandler();
 
         try {
             streamingConnection = cf.createConnection();
@@ -71,7 +71,19 @@ public class NatsProducer extends AbstractGenericProducer {
         }
     }
 
-    private AckHandler getAtLeastOnceAckHandler(){
+    private AckHandler getAtMostOnceAckHandler() {
+        return  new AckHandler() {
+            @Override
+            public void onAck(String nuid, String subject, byte[] data, Exception ex) {
+
+            }
+            @Override
+            public void onAck(String s, Exception e) {
+            }
+        };
+    }
+
+    private AckHandler getAtLeastOnceAckHandler() {
         return  new AckHandler() {
             @Override
             public void onAck(String nuid, String subject, byte[] data, Exception ex) {
