@@ -1,5 +1,6 @@
 package com.mq.testbedconsumers.nats;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 import com.mq.testbedconsumers.generics.AbstractConsumer;
