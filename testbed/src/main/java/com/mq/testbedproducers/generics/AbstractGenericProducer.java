@@ -52,8 +52,9 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 
         produceWithPayload(4096, 2000);
         produceWithPayload(32678, 1000);
-	produceWithPayload(1000000,500);
-	publish(endTest);
+	    produceWithPayload(1000000,500);
+	    publish(endTest);
+        close();
     }
 
     @Override

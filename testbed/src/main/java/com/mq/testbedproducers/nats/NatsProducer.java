@@ -54,7 +54,6 @@ public class NatsProducer extends AbstractGenericProducer {
     @Override
     public void publish(byte[] payload) {
         try {
-            // natsConnection.publish(topicName, payload);
             streamingConnection.publish(topicName, payload, ackHandler);
             log.debug("message published: {}", payload);
         } catch (Exception ioe) {
@@ -82,7 +81,7 @@ public class NatsProducer extends AbstractGenericProducer {
                     try {
                         streamingConnection.publish(topicName, data, ackHandler);
                     } catch (Exception e){
-
+                        e.printStackTrace();
                     }
                 }
 
