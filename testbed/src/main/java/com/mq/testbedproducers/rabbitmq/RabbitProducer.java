@@ -1,6 +1,7 @@
 package com.mq.testbedproducers.rabbitmq;
 
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.ConfirmCallback;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.ReturnedMessage;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -51,11 +53,20 @@ public class RabbitProducer extends AbstractGenericProducer {
 
             @Override
             public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-                if(ack) {
-                    
+                if(!ack) {
                 } else {
 
                 }             
+            }
+            
+        });
+        rabbitTemplate.setReturnsCallback(new RabbitTemplate.ReturnsCallback(){
+
+            @Override
+            public void returnedMessage(ReturnedMessage returned) {
+                if (returned.getReplyCode() == AMQP.ACCESS_REFUSED || returned.getReplyCode() == AMQP.NOT_FOUND) {
+                    rabbitTemplate.convertAndSend(exchange.getName(),ROUTING_KEY, returned.getMessage());
+                }              
             }
             
         });

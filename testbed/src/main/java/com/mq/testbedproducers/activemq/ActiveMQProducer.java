@@ -47,7 +47,8 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     }
 
     private void startSession() {
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+        connectionFactory.setUseAsyncSend(true);
         try {
             connection = connectionFactory.createConnection();
             connection.start();
@@ -55,7 +56,6 @@ public class ActiveMQProducer extends AbstractGenericProducer {
             //Creating a non transactional session to send/receive JMS message.
             session = connection.createSession(true,
                     Session.AUTO_ACKNOWLEDGE);  
-             
             Destination destination = session.createTopic(topic); 
              
             // MessageProducer is used for sending messages to the queue.
@@ -103,6 +103,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
         JmsTemplate jmsTemplate = new JmsTemplate();
         jmsTemplate.setConnectionFactory(connectionFactory());
         jmsTemplate.setPubSubDomain(true);  // enable for Pub Sub to topic. Not Required for Queue.
+        jmsTemplate.setSessionAcknowledgeMode(Session.DUPS_OK_ACKNOWLEDGE);
         //jmsTemplate.setDeliveryDelay(10);
         return jmsTemplate;
     }
