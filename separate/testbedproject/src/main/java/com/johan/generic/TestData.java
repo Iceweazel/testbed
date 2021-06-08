@@ -12,8 +12,6 @@ public class TestData {
 
     private int numberOfMessagesReceived;
     private long totalLatency;
-    private long currentTimeMillis;
-    private long lastTimeStampMillis;
     private int sizeInBytes;
     private ArrayList<Double> list;
     private boolean testStarted;
@@ -23,8 +21,6 @@ public class TestData {
         numberOfMessagesReceived = 0;
         sizeInBytes = 8;
         list = new ArrayList<>();
-	    lastTimeStampMillis = System.currentTimeMillis();
-	    currentTimeMillis = System.currentTimeMillis();
         testStarted = false;
     }
 
@@ -53,7 +49,6 @@ public class TestData {
     }
 
     public void reset() {
-        lastTimeStampMillis = System.currentTimeMillis();
         numberOfMessagesReceived = 0;
         totalLatency = 0L;
         list.clear();
@@ -94,7 +89,6 @@ public class TestData {
         totalLatency += (latency);
 
         numberOfMessagesReceived++;
-        currentTimeMillis = System.currentTimeMillis();
         list.add((double) latency/Math.pow(10,6));
 
     }
