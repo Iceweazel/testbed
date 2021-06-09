@@ -3,7 +3,9 @@ package com.johan.generic;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import com.johan.consumers.ActiveConsumer;
 import com.johan.consumers.RabbitConsumer;
+import com.johan.producers.ActiveProducer;
 import com.johan.producers.RabbitProducer;
 
 public class TestRunner {
@@ -24,6 +26,9 @@ public class TestRunner {
         if(messageQueue.equals("rabbit")) {
             producer = new RabbitProducer();
             consumer = new RabbitConsumer();
+        } else if (messageQueue.equals("active")) {
+            producer = new ActiveProducer();
+            consumer = new ActiveConsumer();
         }
         System.out.println("Runner - Consumer and producer started");
     }
