@@ -5,7 +5,7 @@ import com.johan.generic.TestRunner;
 public final class App {
 
     private App() {
-        TestRunner runner = new TestRunner("rabbit");
+        TestRunner runner = new TestRunner("active");
         runner.startTests();
         runner.endTests();
     }
