@@ -48,7 +48,6 @@ public class RabbitProducer extends AbstractGenericProducer {
         rabbitAdmin.declareBinding(binding);
 
         rabbitTemplate = rabbitAdmin.getRabbitTemplate();
-        rabbitTemplate.setMandatory(true);
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback(){
 
             @Override

@@ -2,11 +2,13 @@ package com.mq.testbedproducers.activemq;
 
 import com.mq.testbedproducers.generics.AbstractGenericProducer;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.jms.JmsException;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +39,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     private Session session;
     private Connection connection;
     private BytesMessage message;
+    private JmsTemplate jmsTemplate;
 
     public ActiveMQProducer() {
         topic = "ledger-1";
@@ -47,24 +50,24 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     }
 
     private void startSession() {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
-        connectionFactory.setUseAsyncSend(true);
-        try {
-            connection = connectionFactory.createConnection();
-            connection.start();
+        jmsTemplate = new JmsTemplate(connectionFactory());
+        // ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+        // connectionFactory.setUseAsyncSend(true);
+        // try {
+        //     connection = connectionFactory.createConnection();
+        //     connection.start();
              
-            //Creating a non transactional session to send/receive JMS message.
-            session = connection.createSession(true,
-                    Session.AUTO_ACKNOWLEDGE);  
-            Destination destination = session.createTopic(topic); 
+        //     session = connection.createSession(true,
+        //             Session.AUTO_ACKNOWLEDGE);  
+        //     Destination destination = session.createTopic(topic); 
              
-            // MessageProducer is used for sending messages to the queue.
-            producer = session.createProducer(destination);
-            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-            message = session.createBytesMessage();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
+        //     // MessageProducer is used for sending messages to the queue.
+        //     producer = session.createProducer(destination);
+        //     producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+        //     message = session.createBytesMessage();
+        // } catch (Exception e) {
+        //     log.error(e.getMessage());
+        // }
     }
 
     @Override
@@ -73,9 +76,9 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     @Override
     public void publish(byte[] payload) {
         try{
-            message.writeBytes(payload);
-            producer.send(message);
-            // jmsTemplate.convertAndSend(topic, payload);
+            // message.writeBytes(payload);
+            // producer.send(message);
+            jmsTemplate.convertAndSend(topic, payload);
         } catch(JMSException e){
             log.error("Recieved Exception during send Message: ", e);
         }
@@ -96,15 +99,16 @@ public class ActiveMQProducer extends AbstractGenericProducer {
         activeMQConnectionFactory.setUserName(userName);
         activeMQConnectionFactory.setPassword(password);
 	    activeMQConnectionFactory.setUseAsyncSend(true);
-        return  activeMQConnectionFactory;
+        CachingConnectionFactory pubConnFactory = new CachingConnectionFactory(activeMQConnectionFactory);
+        return  pubConnFactory;
     }
 
     public JmsTemplate jmsTemplate(){
         JmsTemplate jmsTemplate = new JmsTemplate();
         jmsTemplate.setConnectionFactory(connectionFactory());
         jmsTemplate.setPubSubDomain(true);  // enable for Pub Sub to topic. Not Required for Queue.
-        jmsTemplate.setSessionAcknowledgeMode(Session.DUPS_OK_ACKNOWLEDGE);
-        //jmsTemplate.setDeliveryDelay(10);
+        jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+        jmsTemplate.setSessionTransacted(false);
         return jmsTemplate;
     }
 }
