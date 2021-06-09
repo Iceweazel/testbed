@@ -75,13 +75,9 @@ public class ActiveMQProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-        try{
-            // message.writeBytes(payload);
-            // producer.send(message);
+
             jmsTemplate.convertAndSend(topic, payload);
-        } catch(JMSException e){
-            log.error("Recieved Exception during send Message: ", e);
-        }
+
     }
     
     @Override
