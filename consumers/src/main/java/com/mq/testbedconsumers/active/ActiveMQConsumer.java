@@ -21,6 +21,7 @@ public class ActiveMQConsumer extends AbstractConsumer implements MessageListene
     @Override
     @JmsListener(destination = "${active-mq.topic}")
     public void onMessage(Message message) {
+        log.info("hello");
         try{
             ActiveMQBytesMessage objectMessage = (ActiveMQBytesMessage) message;
             byte[] payload = new byte[(int) objectMessage.getBodyLength()];
