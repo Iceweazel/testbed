@@ -18,11 +18,11 @@ import java.time.Instant;
 @Component
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
 public class ActiveMQConsumer extends AbstractConsumer implements MessageListener {
-
+    
     // @JmsListener(destination = "ledger-1")
     @Override
     public void onMessage(Message message) {
-	    log.info("message");
+	    log.info("message rec");
         try{
             ActiveMQBytesMessage objectMessage = (ActiveMQBytesMessage) message;
             byte[] payload = new byte[(int) objectMessage.getBodyLength()];

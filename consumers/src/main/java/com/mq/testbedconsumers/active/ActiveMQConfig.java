@@ -25,6 +25,9 @@ public class ActiveMQConfig {
     @Value("${active-mq.password}")
     private String password;
 
+    @Value("${active-mq.topic}")
+    private String topic;
+
     @Bean
     public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory  = new ActiveMQConnectionFactory();
@@ -48,7 +51,8 @@ public class ActiveMQConfig {
     public DefaultMessageListenerContainer jMessageListenerContainer() {
         SimpleJmsListenerEndpoint endpoint = new SimpleJmsListenerEndpoint();
         endpoint.setMessageListener(new ActiveMQConsumer());
-        endpoint.setDestination("ledger-1");
+        endpoint.setSubscription("consumer");
+        endpoint.setDestination(topic);
         return jmsListenerContainerFactory().createListenerContainer(endpoint);
     }
 }
