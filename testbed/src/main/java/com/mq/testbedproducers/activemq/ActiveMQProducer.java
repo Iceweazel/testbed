@@ -16,6 +16,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQBytesMessage;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 import javax.jms.Session;
 import javax.jms.JMSException;
 
@@ -69,6 +70,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
         jmsTemplate.setPubSubDomain(true);  // enable for Pub Sub to topic. Not Required for Queue.
         jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
         jmsTemplate.setSessionTransacted(false);
+        jmsTemplate.setDeliveryMode(DeliveryMode.PERSISTENT);
         return jmsTemplate;
     }
 }

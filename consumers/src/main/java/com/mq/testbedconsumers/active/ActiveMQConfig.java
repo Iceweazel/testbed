@@ -12,7 +12,6 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 
 
 @Configuration
-@EnableJms
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
 public class ActiveMQConfig {
 
@@ -40,7 +39,7 @@ public class ActiveMQConfig {
         factory.setConnectionFactory(connectionFactory());
         factory.setPubSubDomain(true);
         // factory.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-        // factory.setSessionTransacted(false);
+        factory.setSessionTransacted(false);
         return factory;
     }
 }
