@@ -39,8 +39,8 @@ public class ActiveMQConfig {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory());
         factory.setPubSubDomain(true);
-        factory.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-        factory.setSessionTransacted(false);
+        // factory.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+        // factory.setSessionTransacted(false);
         return factory;
     }
 }

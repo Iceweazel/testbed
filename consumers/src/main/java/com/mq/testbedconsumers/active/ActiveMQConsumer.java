@@ -19,7 +19,7 @@ public class ActiveMQConsumer extends AbstractConsumer {
 
     @JmsListener(destination = "ledger-1")
     public void onMessage(Message message) {
-	log.info("message");
+	    log.info("message");
         try{
             ActiveMQBytesMessage objectMessage = (ActiveMQBytesMessage) message;
             byte[] payload = new byte[(int) objectMessage.getBodyLength()];

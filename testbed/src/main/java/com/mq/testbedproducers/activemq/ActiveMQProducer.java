@@ -46,7 +46,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-            jmsTemplate.convertAndSend(topic, payload);
+        jmsTemplate.convertAndSend(topic, payload);
     }
     
     @Override
