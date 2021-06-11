@@ -46,7 +46,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-            jmsTemplate.convertAndSend("ledger-1", payload);
+            jmsTemplate.convertAndSend(topic, payload);
     }
     
     @Override
@@ -58,7 +58,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
         activeMQConnectionFactory.setBrokerURL(brokerUrl);
         activeMQConnectionFactory.setUserName(userName);
         activeMQConnectionFactory.setPassword(password);
-	activeMQConnectionFactory.setUseAsyncSend(true);
+	    activeMQConnectionFactory.setUseAsyncSend(true);
         CachingConnectionFactory pubConnFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         return  pubConnFactory;
     }
