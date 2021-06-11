@@ -37,12 +37,12 @@ public class NatsConsumer extends AbstractConsumer {
         Options options = new Options.Builder().natsUrl(uri).clientId("consumer").clusterId("nats-streaming").build();
         StreamingConnectionFactory cf = new StreamingConnectionFactory(options);
         SubscriptionOptions atLeastOnceOpts = new SubscriptionOptions.Builder().manualAcks().durableName("ledger-1").build();
+	SubscriptionOptions atMostOnceOpts = new SubscriptionOptions.Builder().durableName("ledger-1").build();
         MessageHandler messageHandler = getAtMostOnceMessageHandler();
 
         try {
             streamingConnection = cf.createConnection();
-            streamingConnection.subscribe("ledger-1", messageHandler);
-            // streamingConnection.subscribe("ledger-1", messageHandler, atLeastOnceOpts);
+            streamingConnection.subscribe("ledger-1", messageHandler, atMostOnceOpts);
         } catch (Exception e) {
             e.printStackTrace();
         }

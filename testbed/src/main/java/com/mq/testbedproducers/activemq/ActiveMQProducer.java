@@ -15,17 +15,9 @@ import org.springframework.stereotype.Component;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQBytesMessage;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TextMessage;
-
-import static java.util.stream.IntStream.range;
+import javax.jms.JMSException;
 
 @Slf4j
 public class ActiveMQProducer extends AbstractGenericProducer {
@@ -35,10 +27,6 @@ public class ActiveMQProducer extends AbstractGenericProducer {
     private String userName;
     private String password;
 
-    private MessageProducer producer;
-    private Session session;
-    private Connection connection;
-    private BytesMessage message;
     private JmsTemplate jmsTemplate;
 
     public ActiveMQProducer() {
@@ -51,23 +39,6 @@ public class ActiveMQProducer extends AbstractGenericProducer {
 
     private void startSession() {
         jmsTemplate = new JmsTemplate(connectionFactory());
-        // ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
-        // connectionFactory.setUseAsyncSend(true);
-        // try {
-        //     connection = connectionFactory.createConnection();
-        //     connection.start();
-             
-        //     session = connection.createSession(true,
-        //             Session.AUTO_ACKNOWLEDGE);  
-        //     Destination destination = session.createTopic(topic); 
-             
-        //     // MessageProducer is used for sending messages to the queue.
-        //     producer = session.createProducer(destination);
-        //     producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-        //     message = session.createBytesMessage();
-        // } catch (Exception e) {
-        //     log.error(e.getMessage());
-        // }
     }
 
     @Override
@@ -75,18 +46,11 @@ public class ActiveMQProducer extends AbstractGenericProducer {
 
     @Override
     public void publish(byte[] payload) {
-
-            jmsTemplate.convertAndSend(topic, payload);
-
+            jmsTemplate.convertAndSend("ledger-1", payload);
     }
     
     @Override
     public void close() {
-        try {
-            connection.close();
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
     }
 
     public ConnectionFactory connectionFactory(){
@@ -94,7 +58,7 @@ public class ActiveMQProducer extends AbstractGenericProducer {
         activeMQConnectionFactory.setBrokerURL(brokerUrl);
         activeMQConnectionFactory.setUserName(userName);
         activeMQConnectionFactory.setPassword(password);
-	    activeMQConnectionFactory.setUseAsyncSend(true);
+	activeMQConnectionFactory.setUseAsyncSend(true);
         CachingConnectionFactory pubConnFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         return  pubConnFactory;
     }
