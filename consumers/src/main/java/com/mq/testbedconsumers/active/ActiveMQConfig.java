@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.SimpleJmsListenerEndpoint;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 
 @Configuration
@@ -25,7 +26,7 @@ public class ActiveMQConfig {
     private String password;
 
     @Bean
-    public ActiveMQConnectionFactory connectionFactory(){
+    public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory  = new ActiveMQConnectionFactory();
         activeMQConnectionFactory.setBrokerURL(brokerUrl);
         activeMQConnectionFactory.setUserName(userName);
@@ -34,12 +35,20 @@ public class ActiveMQConfig {
     }
 
     @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(){
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory());
         factory.setPubSubDomain(true);
-        // factory.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+        factory.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
         factory.setSessionTransacted(false);
         return factory;
+    }
+    
+    @Bean
+    public DefaultMessageListenerContainer jMessageListenerContainer() {
+        SimpleJmsListenerEndpoint endpoint = new SimpleJmsListenerEndpoint();
+        endpoint.setMessageListener(new ActiveMQConsumer());
+        endpoint.setDestination("ledger-1");
+        return jmsListenerContainerFactory().createListenerContainer(endpoint);
     }
 }

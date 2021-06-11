@@ -10,14 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Component;
 
 import javax.jms.Message;
+import javax.jms.MessageListener;
+
 import java.time.Instant;
 
 @Slf4j
 @Component
 @ConditionalOnProperty(prefix = "testing", value = "mq", havingValue = "active")
-public class ActiveMQConsumer extends AbstractConsumer {
+public class ActiveMQConsumer extends AbstractConsumer implements MessageListener {
 
-    @JmsListener(destination = "ledger-1")
+    // @JmsListener(destination = "ledger-1")
+    @Override
     public void onMessage(Message message) {
 	    log.info("message");
         try{
