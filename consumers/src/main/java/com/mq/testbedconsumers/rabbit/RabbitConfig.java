@@ -51,18 +51,6 @@ public class RabbitConfig {
         connectionFactoryBean.setUsername(userName);
         connectionFactoryBean.setPassword(password);
 
-        // SSL-Configuration if set
-        if(sseEnabled) {
-            connectionFactoryBean.setUseSSL(true);
-            //connectionFactoryBean.setSslAlgorithm(env.getProperty("rabbit.ssl"));
-
-            // This information should be stored safely !!!
-            //connectionFactoryBean.setKeyStore(env.getProperty("rabbit.keystore.name"));
-            //connectionFactoryBean.setKeyStorePassphrase(env.getProperty("rabbit.keystore.password"));
-            //connectionFactoryBean.setTrustStore(env.getProperty("rabbit.truststore"));
-            //connectionFactoryBean.setTrustStorePassphrase(env.getProperty("rabbit.truststore.password"));
-        }
-
         return connectionFactoryBean;
     }
 

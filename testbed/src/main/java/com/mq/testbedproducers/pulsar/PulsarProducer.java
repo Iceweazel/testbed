@@ -39,7 +39,6 @@ public class PulsarProducer extends AbstractGenericProducer {
             producer = client.newProducer()
                     .topic(topicName)
                     .messageRoutingMode(MessageRoutingMode.SinglePartition)
-                    .compressionType(CompressionType.LZ4)           
                     .create();
         } catch (PulsarClientException e) {
             e.printStackTrace();

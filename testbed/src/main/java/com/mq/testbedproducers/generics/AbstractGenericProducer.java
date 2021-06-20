@@ -44,16 +44,16 @@ public abstract class AbstractGenericProducer implements ProducerInterface {
 
     public void produce() {
         log.info("PRODUCE --------------");
-        produceWithPayload(8, 80000);
+        produceWithPayload(8, 160000);
 
-        produceWithPayload(64, 50000);
+        produceWithPayload(64, 80000);
 
-        produceWithPayload(512, 5000);
+        produceWithPayload(512, 12000);
 
-        produceWithPayload(4096, 2000);
+        produceWithPayload(4096, 3600);
         produceWithPayload(32678, 1000);
-	    produceWithPayload(1000000,500);
-	    publish(endTest);
+	produceWithPayload(1000000,100);
+	publish(endTest);
         close();
     }
 
